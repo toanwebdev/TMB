@@ -1,0 +1,39 @@
+.empty {
+	padding-top: 90px;
+
+	&_icon {
+		&_wrapper {
+			width: 80px;
+			height: 80px;
+			font-size: 80px;
+			position: relative;
+		}
+
+		&_cart {
+			color: #fd2e2e;
+		}
+
+		&_x {
+			position: absolute;
+			z-index: 99;
+			bottom: 10px;
+			left: 35px;
+
+			font-size: 25px;
+			color: white;
+		}
+	}
+
+	&_content {
+		margin: 30px 0 10px 0;
+		font-size: 16px;
+	}
+
+	&_btn {
+		width: 400px !important;
+		font-size: 14px !important;
+		color: #288ad6 !important;
+		border-color: #288ad6 !important;
+		text-transform: uppercase !important;
+	}
+}

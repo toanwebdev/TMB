@@ -1,0 +1,137 @@
+.wrapper {
+	width: 450px;
+	margin-top: 20px;
+}
+
+.btn {
+	font-size: 13px !important;
+	font-weight: unset !important;
+	border-radius: 2px !important;
+
+	padding: 5px 20px !important;
+	margin: 0 10px 20px 0 !important;
+
+	&_active {
+		color: #288ad6 !important;
+		border-color: #288ad6 !important;
+	}
+
+	&_now {
+		margin: 20px 0 10px 0 !important;
+		width: 100% !important;
+		height: 45px !important;
+		font-size: 15px !important;
+
+		text-transform: uppercase;
+		border-radius: 3px !important;
+		color: white !important;
+		background-color: #f15a25 !important;
+	}
+
+	&_installment {
+		font-size: 13px !important;
+		width: 100% !important;
+		height: 50px !important;
+
+		text-transform: uppercase;
+		border-radius: 3px !important;
+		color: white !important;
+		background-color: #288ad6 !important;
+
+		&_sub {
+			font-size: 12px !important;
+			margin-top: 3px !important;
+		}
+	}
+}
+
+.price {
+	font-size: 20px;
+	font-weight: 600;
+	color: red;
+}
+
+.promotion {
+	margin: 20px 0;
+	border: 1px solid #e0e0e0;
+	border-radius: 5px;
+
+	&_title {
+		font-size: 16px;
+		font-weight: 600;
+
+		display: block;
+		padding: 5px 10px;
+		background-color: #f0f0f0;
+		border-bottom: 1px solid #e0e0e0;
+	}
+
+	&_item {
+		&_wrapper {
+			padding: 10px;
+		}
+
+		&_icon {
+			font-size: 20px !important;
+			margin-right: 10px;
+			color: green;
+		}
+
+		margin: 5px 0;
+	}
+}
+
+.status {
+	text-transform: uppercase;
+	color: green;
+	font-weight: 600;
+}
+
+.installment {
+	font-size: 12px;
+	margin-left: 10px;
+
+	background-color: #f0f0f0;
+	border-radius: 3px;
+	padding: 2px 5px;
+}
+
+.configuration {
+	margin-top: 20px;
+	width: 450px;
+
+	&_title {
+		font-size: 20px;
+		font-weight: 600;
+		margin-bottom: 10px;
+	}
+
+	&_item {
+		padding: 10px;
+
+		&_hide {
+			display: none !important;
+		}
+
+		&_name {
+			width: 250px;
+			font-weight: 600;
+		}
+
+		&_content {
+			width: 450px;
+		}
+
+		&:last-child {
+			margin-bottom: 20px;
+		}
+	}
+
+	&_btn {
+		width: 200px !important;
+		margin-top: 30px;
+		font-size: 14px !important;
+		color: #288ad6 !important;
+		border-color: #288ad6 !important;
+	}
+}

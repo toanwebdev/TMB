@@ -1,0 +1,63 @@
+.wrapper {
+	padding: 10px 20px;
+}
+
+.title {
+	font-size: 14px;
+	text-transform: uppercase;
+}
+
+.form {
+	&_radio {
+		&_wrapper {
+			margin-top: 10px;
+			padding: 0 20px;
+		}
+
+		.css-1i66d7g {
+			font-size: 14px !important;
+		}
+
+		&[data-checked] {
+			background-color: #f15a25 !important;
+			border-color: #f15a25 !important;
+		}
+
+		&_label {
+			font-size: 14px !important;
+		}
+	}
+
+	&_input {
+		&_wrapper {
+			margin: 10px 0 20px 0;
+			padding: 0 20px;
+		}
+
+		&:focus {
+			border: 1px;
+			border-color: #f15a25 !important;
+			box-shadow: 0 0 0 1px #f15a25 !important;
+		}
+
+		border-color: #999 !important;
+	}
+
+	&_address {
+		&_wrapper {
+			margin: 10px 0;
+			padding: 0 20px;
+		}
+	}
+
+	&_textarea {
+		padding: 0 20px;
+		margin: 10px 0 20px 0;
+	}
+}
+
+.check_icon {
+	margin-right: 5px;
+	font-size: 18px;
+	color: #f15a25;
+}

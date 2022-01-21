@@ -1,0 +1,51 @@
+.wrapper {
+	border-bottom: 1px solid #ccc;
+}
+
+.item_wrapper {
+	width: 1024px;
+	height: 40px;
+	margin: 0 auto;
+}
+
+.item {
+	position: relative;
+	font-size: 14px;
+	cursor: pointer;
+	justify-content: flex-start !important;
+
+	&:hover {
+		color: #f15a25 !important;
+
+		&::after {
+			width: 100%;
+		}
+	}
+
+	&::after {
+		content: '';
+		display: block;
+		width: 0;
+		height: 2px;
+		background-color: #f15a25;
+		position: absolute;
+		z-index: 4;
+		bottom: -9px;
+		transition: 0.3s width ease;
+	}
+
+	&_active {
+		.item {
+			color: #f15a25 !important;
+
+			&::after {
+				width: 100%;
+			}
+		}
+	}
+
+	&_icon {
+		margin-right: 5px;
+		font-size: 17px;
+	}
+}

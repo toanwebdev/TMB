@@ -1,0 +1,10 @@
+{
+  "type": "postgres",
+  "host": "ec2-52-70-205-234.compute-1.amazonaws.com",
+  "port": 5432,
+  "username": "eowoybckyimzdb",
+  "password": "8cc837d8221671e35c8cd559fd981afa7edccd4d99e5e91bbaf5b22cfd00f1ee",
+  "database": "d5dgqm1j9o97h3",
+  "entities": ["dist/entities/*.js"],
+  "migrations": ["dist/migrations/*.js"]
+}

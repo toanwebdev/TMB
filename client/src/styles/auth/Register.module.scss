@@ -1,0 +1,63 @@
+.wrapper {
+	min-height: 100vh;
+	background-color: #f7fafc;
+}
+
+.title {
+	font-size: 30px;
+	font-weight: 700;
+
+	&_sub {
+		font-size: 16px;
+		opacity: 0.8;
+	}
+}
+
+.form {
+	background-color: white;
+	margin-top: 30px;
+	padding: 30px;
+	border-radius: 5px;
+	box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 12px;
+
+	&_label {
+		font-size: 16px;
+	}
+
+	&_input {
+		&_name {
+			width: 195px !important;
+		}
+
+		width: 400px !important;
+
+		&_icon {
+			padding: 0 !important;
+			font-size: 16px !important;
+		}
+	}
+
+	&_registerBtn {
+		margin-top: 20px;
+		width: 400px !important;
+
+		color: white !important;
+		background-color: #288ad6 !important;
+
+		&:hover {
+			background-color: #187ecc !important;
+		}
+	}
+
+	&_login {
+		margin-top: 30px;
+		font-size: 16px;
+		opacity: 0.9;
+		text-align: center;
+
+		&_link {
+			margin-left: 10px;
+			color: #288ad6 !important;
+		}
+	}
+}

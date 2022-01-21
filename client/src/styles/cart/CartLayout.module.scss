@@ -1,0 +1,50 @@
+.wrapper {
+	padding: 10px 0 30px 0;
+	min-height: 87vh;
+	background-color: #f0f0f0;
+}
+
+.not_empty {
+	&_header {
+		width: 600px;
+
+		&_link {
+			color: #288ad6 !important;
+		}
+	}
+
+	&_content {
+		width: 600px;
+		margin-top: 10px;
+
+		background-color: white;
+		border-radius: 5px;
+		box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+
+		&_price_total {
+			padding: 10px 40px;
+			border-top: 1px solid #e0e0e0;
+			font-weight: 700;
+
+			&_number {
+				color: red;
+			}
+		}
+
+		&_book {
+			display: block !important;
+			width: 520px !important;
+			height: 45px !important;
+			margin: 10px 40px 30px 40px !important;
+
+			color: #fff;
+			text-transform: uppercase;
+			background: linear-gradient(180deg, #f79429, #f7712e) !important;
+		}
+	}
+
+	&_footer {
+		margin-top: 20px;
+		color: #999;
+	}
+}

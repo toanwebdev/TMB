@@ -1,0 +1,74 @@
+.wrapper {
+	height: 450px;
+	max-width: 250px;
+	padding: 10px 20px;
+	background-color: white;
+	cursor: pointer;
+
+	&:hover {
+		box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 12px;
+
+		.img_wrapper {
+			padding-top: 0px;
+		}
+
+		.name {
+			color: #288ad6;
+		}
+	}
+}
+
+.box {
+	display: inline-block;
+	font-size: 12px;
+	margin-bottom: 20px;
+	padding: 0 5px;
+	border-radius: 2px;
+	color: white;
+}
+
+.installment {
+	background-color: #a7a7a7;
+}
+
+.discount {
+	background-color: #ff5757;
+	margin-left: 5px;
+}
+
+.img_wrapper {
+	height: 195px;
+	padding-top: 15px;
+	transition: padding 0.2s linear;
+}
+
+.img {
+	width: 180px;
+	height: 180px;
+	object-fit: contain;
+}
+
+.name {
+	font-weight: 400;
+	margin: 10px 0 5px 0;
+	text-transform: capitalize;
+}
+
+.priceOld {
+	text-decoration: line-through;
+	font-weight: 400;
+}
+
+.price {
+	font-size: 17px;
+	font-weight: 600;
+}
+
+.gift {
+	font-size: 13px;
+}
+
+.ratingTotal {
+	font-weight: 500;
+	margin-left: 10px;
+}

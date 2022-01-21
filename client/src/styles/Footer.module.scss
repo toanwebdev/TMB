@@ -1,0 +1,37 @@
+.wrapper {
+	background-color: #f0f0f0f0;
+  padding: 30px 0;
+  font-size: 14px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.content {
+  margin-top: 10px !important;
+  color: #636B7B;
+
+  &:hover {
+    color: #333333;
+  }
+}
+
+.contact_item {
+  margin: 10px 20px 0 0;
+  color: #636B7B;
+
+  &:hover {
+    color: #333333;
+  }
+
+  &_icon {
+    margin-right: 5px;
+    font-size: 18px;
+  }
+
+  &_phone {
+    color: #f15a25;
+  }
+}

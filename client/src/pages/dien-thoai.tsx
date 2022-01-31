@@ -83,23 +83,23 @@ const Smartphone = () => {
 
 	const filterMenus: IMenu[] = [
 		{
-			id: 1,
+			id: '1',
 			name: 'Mới nhất',
 		},
 		{
-			id: 2,
+			id: '2',
 			name: 'A - Z',
 		},
 		{
-			id: 3,
+			id: '3',
 			name: 'Z - A',
 		},
 		{
-			id: 4,
+			id: '4',
 			name: 'Giá tăng dần',
 		},
 		{
-			id: 5,
+			id: '5',
 			name: 'Giá giảm dần',
 		},
 	]

@@ -1,0 +1,5 @@
+mutation ChangeUserProfile($changeUserProfileInput: ChangeUserProfileInput!) {
+	changeUserProfile(changeUserProfileInput: $changeUserProfileInput) {
+		...userMutationResponse
+	}
+}

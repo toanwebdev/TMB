@@ -1,8 +1,100 @@
-import { Box, Button, Flex, Input, Link, Tooltip } from '@chakra-ui/react'
+import {
+	Avatar,
+	Box,
+	Button,
+	Flex,
+	Input,
+	Link,
+	Menu,
+	MenuButton,
+	MenuItem,
+	MenuList,
+	Tooltip,
+} from '@chakra-ui/react'
 import NextLink from 'next/link'
+import { MeDocument, MeQuery, useLogoutMutation } from '../generated/graphql'
 import styles from '../styles/Header.module.scss'
+import { useCheckAuth } from '../utils/useCheckAuth'
 
 const Header = () => {
+	const { data: authData, loading: authLoading } = useCheckAuth()
+	const [logoutUser] = useLogoutMutation()
+
+	const logout = async () => {
+		await logoutUser({
+			update(cache, { data }) {
+				if (data?.logout) {
+					cache.writeQuery<MeQuery>({
+						query: MeDocument,
+						data: { me: null },
+					})
+				}
+			},
+		})
+	}
+
+	let body
+
+	if (authLoading) {
+		body = null
+	} else if (!authData?.me) {
+		body = (
+			<Box className={styles.auth}>
+				{/* login */}
+				<NextLink href='/dang-nhap' passHref>
+					<Link className={styles.auth_link}>Đăng nhập</Link>
+				</NextLink>
+				{/* login */}
+				<span className={styles.auth_slash}>/</span>
+				{/* register */}
+				<NextLink href='/dang-ky' passHref>
+					<Link className={styles.auth_link}>Đăng ký</Link>
+				</NextLink>
+				{/* register */}
+			</Box>
+		)
+	} else {
+		body = (
+			<Box className={styles.auth}>
+				<Menu>
+					<MenuButton className={styles.auth_menu_btn}>
+						<Avatar
+							name={authData.me.username}
+							src={authData.me.avatar as string | undefined}
+							className={styles.auth_avatar}
+						/>
+						<span>
+							{authData.me.last_name} {authData.me.first_name}
+						</span>
+					</MenuButton>
+					<MenuList className={styles.auth_menu_list}>
+						<MenuItem>
+							<NextLink href='/thong-tin-ca-nhan' passHref>
+								<Link className={styles.auth_menu_icon_wrapper}>
+									<i className={`bx bx-user-pin ${styles.auth_menu_icon}`}></i>
+									<span>Thông tin cá nhân</span>
+								</Link>
+							</NextLink>
+						</MenuItem>
+
+						<MenuItem>
+							<i className={`bx bx-edit-alt ${styles.auth_menu_icon}`}></i>
+							<span>Thay đổi mật khẩu</span>
+						</MenuItem>
+
+						<MenuItem
+							onClick={logout}
+							className={styles.auth_menu_icon_wrapper}>
+							<i
+								className={`bx bx-log-out-circle ${styles.auth_menu_icon}`}></i>
+							<span>Đăng xuất</span>
+						</MenuItem>
+					</MenuList>
+				</Menu>
+			</Box>
+		)
+	}
+
 	return (
 		<Flex
 			justifyContent='space-around'
@@ -54,19 +146,7 @@ const Header = () => {
 			</Box>
 
 			{/* auth */}
-			<Box className={styles.auth}>
-				{/* login */}
-				<NextLink href='/dang-nhap' passHref>
-					<Link className={styles.auth_link}>Đăng nhập</Link>
-				</NextLink>
-				{/* login */}
-				{` / `}
-				{/* register */}
-				<NextLink href='/dang-ky' passHref>
-					<Link className={styles.auth_link}>Đăng ký</Link>
-				</NextLink>
-				{/* register */}
-			</Box>
+			{body}
 			{/* auth */}
 		</Flex>
 	)

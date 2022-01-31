@@ -51,43 +51,43 @@ const Cart = () => {
 
 	const cities: IMenu[] = [
 		{
-			id: 1,
+			id: '1',
 			name: 'Hồ Chí Minh',
 		},
 		{
-			id: 2,
+			id: '2',
 			name: 'Hà Nội',
 		},
 		{
-			id: 3,
+			id: '3',
 			name: 'Đà Nẵng',
 		},
 		{
-			id: 4,
+			id: '4',
 			name: 'Nghệ An',
 		},
 		{
-			id: 5,
+			id: '5',
 			name: 'Hà Tĩnh',
 		},
 		{
-			id: 6,
+			id: '6',
 			name: 'Sài Gòn',
 		},
 		{
-			id: 7,
+			id: '7',
 			name: 'Cà Mau',
 		},
 		{
-			id: 8,
+			id: '8',
 			name: 'Vĩnh Long',
 		},
 		{
-			id: 9,
+			id: '9',
 			name: 'Gia Lai',
 		},
 		{
-			id: 10,
+			id: '10',
 			name: 'Thái Nguyên',
 		},
 	]

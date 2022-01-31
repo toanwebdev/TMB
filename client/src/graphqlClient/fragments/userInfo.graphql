@@ -1,0 +1,14 @@
+fragment userInfo on User {
+	id
+	last_name
+	first_name
+	username
+	email
+	gender
+	avatar
+	phone_num
+	provinceId
+	districtId
+	villageId
+	street
+}

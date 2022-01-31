@@ -1,0 +1,6 @@
+query VillageAll($districtId: Float!) {
+	villageAll(districtId: $districtId) {
+		id
+		name
+	}
+}

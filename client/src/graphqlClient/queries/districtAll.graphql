@@ -1,0 +1,6 @@
+query DistrictAll($provinceId: Float!) {
+	districtAll(provinceId: $provinceId) {
+		id
+		name
+	}
+}

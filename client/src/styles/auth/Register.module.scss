@@ -20,20 +20,33 @@
 	border-radius: 5px;
 	box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 12px;
 
-	&_label {
+	&_name {
 		font-size: 16px;
+		font-weight: 600;
+		margin-bottom: 5px;
+
+		&_required {
+			color: #e53e3e;
+		}
 	}
 
 	&_input {
-		&_name {
-			width: 195px !important;
-		}
-
 		width: 400px !important;
 
-		&_icon {
-			padding: 0 !important;
-			font-size: 16px !important;
+		&_password {
+			&_wrapper {
+				position: relative;
+			}
+
+			&_icon {
+				position: absolute !important;
+				z-index: 99;
+				right: 0;
+				top: 32px;
+
+				padding: 0 !important;
+				font-size: 16px !important;
+			}
 		}
 	}
 

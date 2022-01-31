@@ -1,0 +1,6 @@
+query Province($provinceId: Float!) {
+	province(provinceId: $provinceId) {
+		id
+		name
+	}
+}

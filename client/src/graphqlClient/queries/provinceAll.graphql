@@ -1,0 +1,6 @@
+query ProvinceAll {
+	provinceAll {
+		id
+		name
+	}
+}

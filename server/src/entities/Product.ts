@@ -12,8 +12,8 @@ import {
 } from 'typeorm'
 import { Brand } from './Brand'
 import { Category_Product } from './Category_Product'
-import { Color } from './Color'
 import { Order_Product } from './Order_Product'
+import { Product_Color } from './Product_Color'
 import { Product_Image } from './Product_Image'
 import { User } from './User'
 
@@ -59,9 +59,9 @@ export class Product extends BaseEntity {
 	@Column({ default: false })
 	new!: boolean
 
-	@Field({ nullable: true })
-	@Column({ nullable: true })
-	price_old: number
+	@Field()
+	@Column()
+	price_input!: number
 
 	@Field({ nullable: true })
 	@Column({ nullable: true })
@@ -101,8 +101,8 @@ export class Product extends BaseEntity {
 	)
 	category_products: Category_Product[]
 
-	@OneToMany((_to) => Color, (color) => color.product)
-	colors: Color[]
+	@OneToMany((_to) => Product_Color, (product_color) => product_color.product)
+	product_colors: Product_Color[]
 
 	@OneToMany((_to) => Product_Image, (product_image) => product_image.product)
 	product_images: Product_Image[]

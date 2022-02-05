@@ -19,6 +19,11 @@ export type Scalars = {
   Upload: any;
 };
 
+export type AddUserRoleInput = {
+  roleId: Scalars['Float'];
+  userId: Scalars['Float'];
+};
+
 export type ChangePasswordInput = {
   newPassword: Scalars['String'];
 };
@@ -42,7 +47,14 @@ export type District = {
   created_at: Scalars['DateTime'];
   id: Scalars['ID'];
   name: Scalars['String'];
+  provinceId: Scalars['Float'];
   updated_at: Scalars['DateTime'];
+};
+
+export type EditPasswordInput = {
+  id: Scalars['Float'];
+  new_password: Scalars['String'];
+  password: Scalars['String'];
 };
 
 export type FieldError = {
@@ -68,13 +80,20 @@ export type LoginInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addUserRole: User_Role;
   changePassword: UserMutationResponse;
   changeUserProfile: UserMutationResponse;
+  editPassword: UserMutationResponse;
   forgotPassword: Scalars['Boolean'];
   login: UserMutationResponse;
   logout: Scalars['Boolean'];
   register: UserMutationResponse;
   singleUpload: Scalars['String'];
+};
+
+
+export type MutationAddUserRoleArgs = {
+  addUserRoleInput: AddUserRoleInput;
 };
 
 
@@ -87,6 +106,11 @@ export type MutationChangePasswordArgs = {
 
 export type MutationChangeUserProfileArgs = {
   changeUserProfileInput: ChangeUserProfileInput;
+};
+
+
+export type MutationEditPasswordArgs = {
+  editPasswordInput: EditPasswordInput;
 };
 
 
@@ -125,6 +149,9 @@ export type Query = {
   me?: Maybe<User>;
   province: Province;
   provinceAll: Array<Province>;
+  roleById: Role;
+  roleByName: Role;
+  userRole: User_Role;
   village: Village;
   villageAll: Array<Village>;
 };
@@ -145,6 +172,21 @@ export type QueryProvinceArgs = {
 };
 
 
+export type QueryRoleByIdArgs = {
+  id: Scalars['Float'];
+};
+
+
+export type QueryRoleByNameArgs = {
+  name: Scalars['String'];
+};
+
+
+export type QueryUserRoleArgs = {
+  userId: Scalars['Float'];
+};
+
+
 export type QueryVillageArgs = {
   villageId: Scalars['Float'];
 };
@@ -161,6 +203,14 @@ export type RegisterInput = {
   last_name: Scalars['String'];
   password: Scalars['String'];
   username: Scalars['String'];
+};
+
+export type Role = {
+  __typename?: 'Role';
+  created_at: Scalars['DateTime'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  updated_at: Scalars['DateTime'];
 };
 
 export type User = {
@@ -190,9 +240,18 @@ export type UserMutationResponse = IMutationResponse & {
   user?: Maybe<User>;
 };
 
+export type User_Role = {
+  __typename?: 'User_Role';
+  created_at: Scalars['DateTime'];
+  roleId: Scalars['Float'];
+  updated_at: Scalars['DateTime'];
+  userId: Scalars['Float'];
+};
+
 export type Village = {
   __typename?: 'Village';
   created_at: Scalars['DateTime'];
+  districtId: Scalars['Float'];
   id: Scalars['ID'];
   name: Scalars['String'];
   updated_at: Scalars['DateTime'];
@@ -205,6 +264,13 @@ export type UserMutationStatusesFragment = { __typename?: 'UserMutationResponse'
 export type UserInfoFragment = { __typename?: 'User', id: string, last_name: string, first_name: string, username: string, email: string, gender: string, avatar?: string | null | undefined, phone_num?: string | null | undefined, provinceId?: number | null | undefined, districtId?: number | null | undefined, villageId?: number | null | undefined, street?: string | null | undefined };
 
 export type UserMutationResponseFragment = { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, last_name: string, first_name: string, username: string, email: string, gender: string, avatar?: string | null | undefined, phone_num?: string | null | undefined, provinceId?: number | null | undefined, districtId?: number | null | undefined, villageId?: number | null | undefined, street?: string | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined };
+
+export type AddUserRoleMutationVariables = Exact<{
+  addUserRoleInput: AddUserRoleInput;
+}>;
+
+
+export type AddUserRoleMutation = { __typename?: 'Mutation', addUserRole: { __typename?: 'User_Role', userId: number, roleId: number } };
 
 export type ChangePasswordMutationVariables = Exact<{
   userId: Scalars['Float'];
@@ -221,6 +287,13 @@ export type ChangeUserProfileMutationVariables = Exact<{
 
 
 export type ChangeUserProfileMutation = { __typename?: 'Mutation', changeUserProfile: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, last_name: string, first_name: string, username: string, email: string, gender: string, avatar?: string | null | undefined, phone_num?: string | null | undefined, provinceId?: number | null | undefined, districtId?: number | null | undefined, villageId?: number | null | undefined, street?: string | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+
+export type EditPasswordMutationVariables = Exact<{
+  editPasswordInput: EditPasswordInput;
+}>;
+
+
+export type EditPasswordMutation = { __typename?: 'Mutation', editPassword: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, last_name: string, first_name: string, username: string, email: string, gender: string, avatar?: string | null | undefined, phone_num?: string | null | undefined, provinceId?: number | null | undefined, districtId?: number | null | undefined, villageId?: number | null | undefined, street?: string | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
 
 export type ForgotPasswordMutationVariables = Exact<{
   forgotPasswordInput: ForgotPasswordInput;
@@ -286,6 +359,27 @@ export type ProvinceAllQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ProvinceAllQuery = { __typename?: 'Query', provinceAll: Array<{ __typename?: 'Province', id: string, name: string }> };
 
+export type RoleByIdQueryVariables = Exact<{
+  id: Scalars['Float'];
+}>;
+
+
+export type RoleByIdQuery = { __typename?: 'Query', roleById: { __typename?: 'Role', id: string, name: string } };
+
+export type RoleByNameQueryVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type RoleByNameQuery = { __typename?: 'Query', roleByName: { __typename?: 'Role', id: string, name: string } };
+
+export type UserRoleQueryVariables = Exact<{
+  userId: Scalars['Float'];
+}>;
+
+
+export type UserRoleQuery = { __typename?: 'Query', userRole: { __typename?: 'User_Role', userId: number, roleId: number } };
+
 export type VillageQueryVariables = Exact<{
   villageId: Scalars['Float'];
 }>;
@@ -342,6 +436,40 @@ export const UserMutationResponseFragmentDoc = gql`
     ${UserMutationStatusesFragmentDoc}
 ${UserInfoFragmentDoc}
 ${FieldErrorFragmentDoc}`;
+export const AddUserRoleDocument = gql`
+    mutation AddUserRole($addUserRoleInput: AddUserRoleInput!) {
+  addUserRole(addUserRoleInput: $addUserRoleInput) {
+    userId
+    roleId
+  }
+}
+    `;
+export type AddUserRoleMutationFn = Apollo.MutationFunction<AddUserRoleMutation, AddUserRoleMutationVariables>;
+
+/**
+ * __useAddUserRoleMutation__
+ *
+ * To run a mutation, you first call `useAddUserRoleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddUserRoleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addUserRoleMutation, { data, loading, error }] = useAddUserRoleMutation({
+ *   variables: {
+ *      addUserRoleInput: // value for 'addUserRoleInput'
+ *   },
+ * });
+ */
+export function useAddUserRoleMutation(baseOptions?: Apollo.MutationHookOptions<AddUserRoleMutation, AddUserRoleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddUserRoleMutation, AddUserRoleMutationVariables>(AddUserRoleDocument, options);
+      }
+export type AddUserRoleMutationHookResult = ReturnType<typeof useAddUserRoleMutation>;
+export type AddUserRoleMutationResult = Apollo.MutationResult<AddUserRoleMutation>;
+export type AddUserRoleMutationOptions = Apollo.BaseMutationOptions<AddUserRoleMutation, AddUserRoleMutationVariables>;
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($userId: Float!, $token: String!, $changePasswordInput: ChangePasswordInput!) {
   changePassword(
@@ -414,6 +542,39 @@ export function useChangeUserProfileMutation(baseOptions?: Apollo.MutationHookOp
 export type ChangeUserProfileMutationHookResult = ReturnType<typeof useChangeUserProfileMutation>;
 export type ChangeUserProfileMutationResult = Apollo.MutationResult<ChangeUserProfileMutation>;
 export type ChangeUserProfileMutationOptions = Apollo.BaseMutationOptions<ChangeUserProfileMutation, ChangeUserProfileMutationVariables>;
+export const EditPasswordDocument = gql`
+    mutation EditPassword($editPasswordInput: EditPasswordInput!) {
+  editPassword(editPasswordInput: $editPasswordInput) {
+    ...userMutationResponse
+  }
+}
+    ${UserMutationResponseFragmentDoc}`;
+export type EditPasswordMutationFn = Apollo.MutationFunction<EditPasswordMutation, EditPasswordMutationVariables>;
+
+/**
+ * __useEditPasswordMutation__
+ *
+ * To run a mutation, you first call `useEditPasswordMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditPasswordMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editPasswordMutation, { data, loading, error }] = useEditPasswordMutation({
+ *   variables: {
+ *      editPasswordInput: // value for 'editPasswordInput'
+ *   },
+ * });
+ */
+export function useEditPasswordMutation(baseOptions?: Apollo.MutationHookOptions<EditPasswordMutation, EditPasswordMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditPasswordMutation, EditPasswordMutationVariables>(EditPasswordDocument, options);
+      }
+export type EditPasswordMutationHookResult = ReturnType<typeof useEditPasswordMutation>;
+export type EditPasswordMutationResult = Apollo.MutationResult<EditPasswordMutation>;
+export type EditPasswordMutationOptions = Apollo.BaseMutationOptions<EditPasswordMutation, EditPasswordMutationVariables>;
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($forgotPasswordInput: ForgotPasswordInput!) {
   forgotPassword(forgotPasswordInput: $forgotPasswordInput)
@@ -749,6 +910,114 @@ export function useProvinceAllLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type ProvinceAllQueryHookResult = ReturnType<typeof useProvinceAllQuery>;
 export type ProvinceAllLazyQueryHookResult = ReturnType<typeof useProvinceAllLazyQuery>;
 export type ProvinceAllQueryResult = Apollo.QueryResult<ProvinceAllQuery, ProvinceAllQueryVariables>;
+export const RoleByIdDocument = gql`
+    query RoleById($id: Float!) {
+  roleById(id: $id) {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useRoleByIdQuery__
+ *
+ * To run a query within a React component, call `useRoleByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRoleByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRoleByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRoleByIdQuery(baseOptions: Apollo.QueryHookOptions<RoleByIdQuery, RoleByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<RoleByIdQuery, RoleByIdQueryVariables>(RoleByIdDocument, options);
+      }
+export function useRoleByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RoleByIdQuery, RoleByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<RoleByIdQuery, RoleByIdQueryVariables>(RoleByIdDocument, options);
+        }
+export type RoleByIdQueryHookResult = ReturnType<typeof useRoleByIdQuery>;
+export type RoleByIdLazyQueryHookResult = ReturnType<typeof useRoleByIdLazyQuery>;
+export type RoleByIdQueryResult = Apollo.QueryResult<RoleByIdQuery, RoleByIdQueryVariables>;
+export const RoleByNameDocument = gql`
+    query RoleByName($name: String!) {
+  roleByName(name: $name) {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useRoleByNameQuery__
+ *
+ * To run a query within a React component, call `useRoleByNameQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRoleByNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRoleByNameQuery({
+ *   variables: {
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useRoleByNameQuery(baseOptions: Apollo.QueryHookOptions<RoleByNameQuery, RoleByNameQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<RoleByNameQuery, RoleByNameQueryVariables>(RoleByNameDocument, options);
+      }
+export function useRoleByNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RoleByNameQuery, RoleByNameQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<RoleByNameQuery, RoleByNameQueryVariables>(RoleByNameDocument, options);
+        }
+export type RoleByNameQueryHookResult = ReturnType<typeof useRoleByNameQuery>;
+export type RoleByNameLazyQueryHookResult = ReturnType<typeof useRoleByNameLazyQuery>;
+export type RoleByNameQueryResult = Apollo.QueryResult<RoleByNameQuery, RoleByNameQueryVariables>;
+export const UserRoleDocument = gql`
+    query UserRole($userId: Float!) {
+  userRole(userId: $userId) {
+    userId
+    roleId
+  }
+}
+    `;
+
+/**
+ * __useUserRoleQuery__
+ *
+ * To run a query within a React component, call `useUserRoleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserRoleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserRoleQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useUserRoleQuery(baseOptions: Apollo.QueryHookOptions<UserRoleQuery, UserRoleQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<UserRoleQuery, UserRoleQueryVariables>(UserRoleDocument, options);
+      }
+export function useUserRoleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserRoleQuery, UserRoleQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<UserRoleQuery, UserRoleQueryVariables>(UserRoleDocument, options);
+        }
+export type UserRoleQueryHookResult = ReturnType<typeof useUserRoleQuery>;
+export type UserRoleLazyQueryHookResult = ReturnType<typeof useUserRoleLazyQuery>;
+export type UserRoleQueryResult = Apollo.QueryResult<UserRoleQuery, UserRoleQueryVariables>;
 export const VillageDocument = gql`
     query Village($villageId: Float!) {
   village(villageId: $villageId) {

@@ -19,7 +19,9 @@ import {
 	MeDocument,
 	MeQuery,
 	RegisterInput,
+	useAddUserRoleMutation,
 	useRegisterMutation,
+	useRoleByNameQuery,
 } from '../generated/graphql'
 import { mapFieldErrors } from '../helpers/mapFieldErrors'
 import styles from '../styles/auth/Register.module.scss'
@@ -41,6 +43,10 @@ const Register = () => {
 	}
 
 	const [registerUser] = useRegisterMutation()
+	const { data: roleData, loading: roleLoading } = useRoleByNameQuery({
+		variables: { name: 'user' },
+	})
+	const [addUserRole] = useAddUserRoleMutation()
 
 	const onRegisterSubmit = async (
 		values: RegisterInput,
@@ -64,17 +70,33 @@ const Register = () => {
 			setErrors(mapFieldErrors(response.data.register.errors))
 		} else if (response.data?.register.user) {
 			// register successfully
-			toast.success(`Xin chào ${response.data.register.user.first_name} `, {
-				position: 'top-center',
-				autoClose: 3000,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: 'colored',
-			})
-			router.push('/')
+			if (!roleLoading && roleData) {
+				const res = await addUserRole({
+					variables: {
+						addUserRoleInput: {
+							userId: parseInt(response.data.register.user.id),
+							roleId: parseInt(roleData.roleByName.id),
+						},
+					},
+				})
+
+				if (res.data?.addUserRole) {
+					toast.success(
+						`Xin chào ${response.data.register.user.first_name} 😎😎`,
+						{
+							position: 'top-center',
+							autoClose: 3000,
+							hideProgressBar: false,
+							closeOnClick: true,
+							pauseOnHover: true,
+							draggable: true,
+							progress: undefined,
+							theme: 'colored',
+						},
+					)
+					router.push('/')
+				}
+			}
 		}
 	}
 
@@ -104,7 +126,7 @@ const Register = () => {
 								templateColumns='repeat(2, 1fr)'
 								gap='10px'
 								className={styles.form_input}>
-								<Box mt={4}>
+								<Box>
 									<InputField
 										name='last_name'
 										placeholder='Họ'
@@ -114,7 +136,7 @@ const Register = () => {
 									/>
 								</Box>
 
-								<Box mt={4}>
+								<Box>
 									<InputField
 										name='first_name'
 										placeholder='Tên'

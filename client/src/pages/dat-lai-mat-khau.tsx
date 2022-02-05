@@ -64,7 +64,7 @@ const ChangePassword = () => {
 				setErrors(fieldErrors)
 			} else if (response.data?.changePassword.user) {
 				toast.success(
-					`Xin chào ${response.data.changePassword.user.first_name} `,
+					`Xin chào ${response.data.changePassword.user.first_name} 😎😎`,
 					{
 						position: 'top-center',
 						autoClose: 3000,

@@ -51,7 +51,8 @@
 	}
 
 	&_content_wrapper {
-		height: 200px;
+		max-height: 200px;
+		min-height: 40px;
 		overflow-y: auto;
 	}
 }

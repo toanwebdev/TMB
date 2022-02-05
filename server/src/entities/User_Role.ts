@@ -13,14 +13,16 @@ import { User } from './User'
 @ObjectType()
 @Entity()
 export class User_Role extends BaseEntity {
+	@Field()
 	@PrimaryColumn()
-	user_id!: number
+	userId!: number
 
 	@ManyToOne((_to) => User, (user) => user.user_roles)
 	user!: User
 
+	@Field()
 	@PrimaryColumn()
-	role_id!: number
+	roleId!: number
 
 	@ManyToOne((_to) => Role, (role) => role.user_roles)
 	role!: Role

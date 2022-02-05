@@ -1,0 +1,32 @@
+.title {
+	margin: 50px 0 20px 0;
+	font-size: 18px;
+	font-weight: 600;
+}
+
+.list_item {
+	margin-bottom: 20px !important;
+
+	&_title {
+		font-size: 16px;
+		margin-bottom: 10px;
+
+		& span {
+			font-weight: 600;
+		}
+	}
+
+	&_success {
+		color: green;
+	}
+
+	&_danger {
+		color: red;
+	}
+
+  &_progress  {
+    & div {
+      background-color: #f15a25;
+    }
+  }
+}

@@ -16,6 +16,7 @@ interface InputFieldProps {
 	isRequired?: boolean
 	onChange?: any
 	value?: string | number
+	isDisabled?: boolean
 }
 
 const InputField = ({ isRequired, textarea, ...props }: InputFieldProps) => {

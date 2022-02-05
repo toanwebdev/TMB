@@ -1,0 +1,39 @@
+.search_add {
+	margin-top: 40px;
+
+	&_input {
+		background-color: white !important;
+		padding: 0 10px !important;
+		width: 400px !important;
+
+		&_wrapper {
+			position: relative;
+		}
+
+		&_icon {
+			position: absolute;
+			z-index: 99;
+			top: 0;
+			right: 0;
+			height: 40px;
+			width: 40px;
+
+			font-size: 20px !important;
+      opacity: 0.9;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+	}
+
+	&_btn {
+		color: white !important;
+		background-color: #288ad6 !important;
+		font-size: 14px !important;
+
+		&_icon {
+			font-size: 18px;
+			margin-right: 10px;
+		}
+	}
+}

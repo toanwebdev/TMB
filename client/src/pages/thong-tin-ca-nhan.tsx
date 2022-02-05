@@ -19,18 +19,26 @@ import {
 	Stack,
 	useDisclosure,
 } from '@chakra-ui/react'
-import { Field, Form, Formik } from 'formik'
+import { Field, Form, Formik, FormikHelpers } from 'formik'
 import { useState } from 'react'
+import { toast } from 'react-toastify'
 import CartFormMenuItem from '../components/cart/CartFormMenuItem'
 import InputField from '../components/InputField'
 import Layout from '../components/Layout'
 import {
 	ChangeUserProfileInput,
+	MeDocument,
+	MeQuery,
+	useChangeUserProfileMutation,
 	useDistrictAllQuery,
+	useDistrictQuery,
 	useProvinceAllQuery,
+	useProvinceQuery,
 	useSingleUploadMutation,
 	useVillageAllQuery,
+	useVillageQuery,
 } from '../generated/graphql'
+import { mapFieldErrors } from '../helpers/mapFieldErrors'
 import styles from '../styles/auth/UserProfile.module.scss'
 import { useCheckAuth } from '../utils/useCheckAuth'
 
@@ -39,23 +47,25 @@ const UserProfile = () => {
 	const [avatar, setAvatar] = useState('')
 	const [file, setFile] = useState('')
 
-	const [lastName, setLastName] = useState(
-		authData?.me?.last_name ? authData?.me?.last_name : '',
-	)
-	const [firstName, setFirstName] = useState(
-		authData?.me?.first_name ? authData?.me?.first_name : '',
-	)
-	const [email, setEmail] = useState(
-		authData?.me?.email ? authData?.me?.email : '',
-	)
-	const [phoneNum, setPhoneNum] = useState(
-		authData?.me?.phone_num ? authData?.me?.phone_num : '',
-	)
+	const initProvinceId = authData?.me?.provinceId
+		? authData?.me?.provinceId.toString()
+		: '-1'
 
-	const [provinceId, setProvinceId] = useState('-1')
-	const [districtId, setDistrictId] = useState('-1')
+	const initDistrictId = authData?.me?.districtId
+		? authData?.me?.districtId.toString()
+		: '-1'
+
+	const initVillageId = authData?.me?.villageId
+		? authData?.me?.villageId.toString()
+		: '-1'
+
+	const [provinceId, setProvinceId] = useState(initProvinceId)
+	const [districtId, setDistrictId] = useState(initDistrictId)
+	const [villageId, setVillageId] = useState(initVillageId)
 
 	const [singleUpload] = useSingleUploadMutation()
+	const [changeUserProfile] = useChangeUserProfileMutation()
+
 	const { data: provinceAllData } = useProvinceAllQuery()
 	const { data: districtAllData } = useDistrictAllQuery({
 		variables: {
@@ -68,6 +78,24 @@ const UserProfile = () => {
 		},
 	})
 
+	const { data: provinceData } = useProvinceQuery({
+		variables: {
+			provinceId: authData?.me?.provinceId ? authData.me.provinceId : -1,
+		},
+	})
+
+	const { data: districtData } = useDistrictQuery({
+		variables: {
+			districtId: authData?.me?.districtId ? authData.me.districtId : -1,
+		},
+	})
+
+	const { data: villageData } = useVillageQuery({
+		variables: {
+			villageId: authData?.me?.villageId ? authData.me.villageId : -1,
+		},
+	})
+
 	const {
 		isOpen: isOpenModal,
 		onOpen: onOpenModal,
@@ -76,48 +104,96 @@ const UserProfile = () => {
 
 	const initialValues: ChangeUserProfileInput = {
 		id: parseInt(authData?.me?.id as string),
-		last_name: '',
-		first_name: '',
+		last_name: authData?.me?.last_name as string,
+		first_name: authData?.me?.first_name as string,
 		gender: authData?.me?.gender as string,
-		email: '',
+		email: authData?.me?.email as string,
 		avatar: '',
-		phone_num: '',
-		provinceId: -1,
-		districtId: -1,
-		villageId: -1,
-		street: '',
+		phone_num: authData?.me?.phone_num ? authData.me.phone_num : '',
+		provinceId: authData?.me?.provinceId ? authData.me.provinceId : -1,
+		districtId: authData?.me?.districtId ? authData.me.districtId : -1,
+		villageId: authData?.me?.villageId ? authData.me.villageId : -1,
+		street: authData?.me?.street ? authData.me.street : '',
 	}
 
 	const handleChangeAvatar = (e: any) => {
-		const reader = new FileReader()
-		reader.onload = () => {
-			if (reader.readyState === 2) {
-				setAvatar(reader.result as string)
+		if (e.target.files[0]) {
+			const reader = new FileReader()
+			reader.onload = () => {
+				if (reader.readyState === 2) {
+					setAvatar(reader.result as string)
+				}
 			}
-		}
 
-		reader.readAsDataURL(e.target.files[0])
-		setFile(e.target.files[0])
+			reader.readAsDataURL(e.target.files[0])
+			setFile(e.target.files[0])
+		}
 	}
 
-	const onEditUserProfileSubmit = async (values: ChangeUserProfileInput) => {
-		let avatarUpload = avatar
-		await singleUpload({
-			variables: {
-				file,
-			},
-			update(_cache, { data }) {
-				if (data?.singleUpload) {
-					avatarUpload = data.singleUpload
-				}
-			},
-		})
+	const onEditUserProfileSubmit = async (
+		values: ChangeUserProfileInput,
+		{ setErrors }: FormikHelpers<ChangeUserProfileInput>,
+	) => {
+		let avatarUpload = authData?.me?.avatar as string
+		if (avatar) {
+			if (avatar !== 'null') {
+				await singleUpload({
+					variables: {
+						file,
+					},
+					update(_cache, { data }) {
+						if (data?.singleUpload) {
+							avatarUpload = data.singleUpload
+						}
+					},
+				})
+			} else {
+				avatarUpload = ''
+			}
+		}
 
 		const valuesUpdated: ChangeUserProfileInput = {
 			...values,
 			avatar: avatarUpload,
+			provinceId: parseInt(provinceId),
+			districtId: parseInt(districtId),
+			villageId: parseInt(villageId),
 		}
-		console.log(valuesUpdated)
+
+		const response = await changeUserProfile({
+			variables: {
+				changeUserProfileInput: valuesUpdated,
+			},
+			update(cache, { data }) {
+				console.log(data?.changeUserProfile.user)
+
+				if (data?.changeUserProfile.success) {
+					cache.writeQuery<MeQuery>({
+						query: MeDocument,
+						data: { me: data.changeUserProfile.user },
+					})
+				}
+			},
+		})
+
+		if (response.data?.changeUserProfile.errors) {
+			setErrors(mapFieldErrors(response.data.changeUserProfile.errors))
+		} else if (response.data?.changeUserProfile.user) {
+			// changeUserProfile successfully
+			toast.success(`Cập nhật thông tin thành công 😍😍`, {
+				position: 'top-right',
+				autoClose: 3000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: 'colored',
+			})
+
+			setAvatar(avatarUpload)
+			onCloseModal()
+		}
 	}
 
 	if (authLoading || (!authLoading && !authData?.me)) {
@@ -200,7 +276,7 @@ const UserProfile = () => {
 						<span className={styles.info_name}>Địa chỉ giao hàng:</span>
 						<span>
 							{authData?.me?.provinceId ? (
-								`${authData.me.street}`
+								`${authData.me.street}, ${villageData?.village.name}, ${districtData?.district.name}, ${provinceData?.province.name}`
 							) : (
 								<span className={styles.info_value_empty}>
 									Chưa có địa chỉ giao hàng
@@ -220,7 +296,7 @@ const UserProfile = () => {
 					{/* edit user profile */}
 					<Modal isOpen={isOpenModal} onClose={onCloseModal}>
 						<ModalOverlay />
-						<ModalContent>
+						<ModalContent className={styles.info_modal}>
 							<ModalHeader>Chỉnh sửa thông tin cá nhân</ModalHeader>
 							<ModalCloseButton />
 							<Formik
@@ -228,7 +304,7 @@ const UserProfile = () => {
 								onSubmit={onEditUserProfileSubmit}>
 								{({ isSubmitting }) => (
 									<Form>
-										<ModalBody className={styles.info_modal}>
+										<ModalBody>
 											{/* avatar */}
 											<Box>
 												<Box className={styles.info_modal_name}>
@@ -254,7 +330,10 @@ const UserProfile = () => {
 													</Avatar>
 													<Box>
 														<Button className={styles.info_modal_upload_custom}>
-															<span className={styles.info_modal_upload_custom_input}>
+															<span
+																className={
+																	styles.info_modal_upload_custom_input
+																}>
 																<InputField
 																	name='avatar'
 																	type='file'
@@ -293,8 +372,6 @@ const UserProfile = () => {
 														placeholder='Họ'
 														label='Họ'
 														type='text'
-														value={lastName as string | number}
-														onChange={(e: any) => setLastName(e.target.value)}
 														isRequired
 													/>
 												</Box>
@@ -305,8 +382,6 @@ const UserProfile = () => {
 														placeholder='Tên'
 														label='Tên'
 														type='text'
-														value={firstName as string | number}
-														onChange={(e: any) => setFirstName(e.target.value)}
 														isRequired
 													/>
 												</Box>
@@ -342,8 +417,6 @@ const UserProfile = () => {
 													placeholder='Email'
 													label='Email'
 													type='email'
-													value={email as string | number}
-													onChange={(e: any) => setEmail(e.target.value)}
 													isRequired
 												/>
 											</Box>
@@ -356,8 +429,6 @@ const UserProfile = () => {
 													placeholder='Số điện thoại'
 													label='Số điện thoại'
 													type='text'
-													value={phoneNum as string | number}
-													onChange={(e: any) => setPhoneNum(e.target.value)}
 												/>
 											</Box>
 											{/* phone */}
@@ -373,20 +444,33 @@ const UserProfile = () => {
 													gap='10px'>
 													<CartFormMenuItem
 														menus={provinceAllData?.provinceAll}
-														initAddress='Chọn tỉnh, thành phố'
+														initAddress={
+															provinceData?.province
+																? provinceData.province
+																: { id: '-1', name: 'Chọn tỉnh, thành phố' }
+														}
 														placeholder='Nhập tỉnh, thành để tìm kiếm nhanh'
 														changeAddress={(id: any) => setProvinceId(id)}
 													/>
 													<CartFormMenuItem
 														menus={districtAllData?.districtAll}
-														initAddress='Chọn quận, huyện'
+														initAddress={
+															districtData?.district
+																? districtData.district
+																: { id: '-1', name: 'Chọn quận, huyện' }
+														}
 														placeholder='Nhập quận, huyện để tìm kiếm nhanh'
 														changeAddress={(id: any) => setDistrictId(id)}
 													/>
 													<CartFormMenuItem
 														menus={villageAllData?.villageAll}
-														initAddress='Chọn phường, xã'
+														initAddress={
+															villageData?.village
+																? villageData.village
+																: { id: '-1', name: 'Chọn phường, xã' }
+														}
 														placeholder='Nhập phường, xã để tìm kiếm nhanh'
+														changeAddress={(id: any) => setVillageId(id)}
 													/>
 													<InputField
 														name='street'

@@ -1,14 +1,18 @@
 export interface IProduct {
 	id: number
-	img: string
 	name: string
-	priceOld: number
+	slug: string
+	avatar: string
+	description: string
+	price_input: number
 	discount: number
 	price: number
-	rating: number
-	ratingTotal: number
 	installment: boolean
+	best_sell: boolean
+	highlight: boolean
+	new: boolean
 	gift: number
+	brandId: number
 }
 
 export interface IProductName {

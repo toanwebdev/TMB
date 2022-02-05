@@ -1,0 +1,35 @@
+.wrapper {
+	padding: 15px 25px;
+	border-radius: 30px;
+	background-color: white;
+	box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.chart {
+	width: 40%;
+
+	&_value {
+		font-size: 20px;
+		font-weight: 600;
+	}
+}
+
+.info {
+	width: 60%;
+
+	&_title {
+		font-size: 16px;
+		font-weight: 600;
+
+		& span {
+			font-size: 13px;
+			font-weight: 400;
+		}
+	}
+
+	&_value {
+		font-size: 22px;
+		font-weight: 600;
+		color: black;
+	}
+}

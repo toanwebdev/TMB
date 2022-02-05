@@ -35,6 +35,9 @@ import { UploadResolver } from './resolvers/upload'
 import { UserResolver } from './resolvers/user'
 import { Context } from './types/Context'
 import { buildDataLoaders } from './utils/dataLoaders'
+import { UserRoleResolver } from './resolvers/userRole'
+import { RoleResolver } from './resolvers/role'
+import { Product_Color } from './entities/Product_Color'
 
 require('dotenv').config()
 
@@ -66,6 +69,7 @@ async function main() {
 			Category,
 			Category_Product,
 			Color,
+			Product_Color,
 			Province,
 			District,
 			Village,
@@ -127,6 +131,8 @@ async function main() {
 				ProvinceResolver,
 				DistrictResolver,
 				VillageResolver,
+				UserRoleResolver,
+				RoleResolver,
 			],
 			validate: false,
 		}),

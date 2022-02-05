@@ -13,14 +13,16 @@ import { Product } from './Product'
 @ObjectType()
 @Entity()
 export class Order_Product extends BaseEntity {
+	@Field()
 	@PrimaryColumn()
-	order_id!: number
+	orderId!: number
 
 	@ManyToOne((_to) => Order, (order) => order.order_products)
 	order!: Order
 
+	@Field()
 	@PrimaryColumn()
-	product_id!: number
+	productId!: number
 
 	@ManyToOne((_to) => Product, (product) => product.order_products)
 	product!: Product

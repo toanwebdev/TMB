@@ -17,7 +17,11 @@ export const useCheckAuth = () => {
 					router.route === '/dat-lai-mat-khau')
 			) {
 				router.replace('/')
-			} else if (!data?.me && router.route === '/thong-tin-tai-khoan') {
+			} else if (
+				!data?.me &&
+				(router.route === '/thong-tin-ca-nhan' ||
+					router.route.includes('/quan-tri'))
+			) {
 				router.replace('/dang-nhap')
 			}
 		}

@@ -46,7 +46,7 @@ const Login = () => {
 			setErrors(mapFieldErrors(response.data.login.errors))
 		} else if (response.data?.login.user) {
 			// login successfully
-			toast.success(`Xin chào ${response.data.login.user.first_name} `, {
+			toast.success(`Xin chào ${response.data.login.user.first_name} 😎😎`, {
 				position: 'top-center',
 				autoClose: 3000,
 				hideProgressBar: false,

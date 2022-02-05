@@ -1,0 +1,6 @@
+query UserRole($userId: Float!) {
+	userRole(userId: $userId) {
+		userId
+		roleId
+	}
+}

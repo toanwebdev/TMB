@@ -5,12 +5,11 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
-	ManyToOne,
 	OneToMany,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm'
-import { Product } from './Product'
+import { Product_Color } from './Product_Color'
 import { Product_Image } from './Product_Image'
 
 @ObjectType()
@@ -25,8 +24,8 @@ export class Color extends BaseEntity {
 	@MaxLength(60)
 	name!: string
 
-	@ManyToOne((_to) => Product, (product) => product.colors)
-	product!: Product
+	@OneToMany((_to) => Product_Color, (product_color) => product_color.color)
+	product_colors: Product_Color[]
 
 	@OneToMany((_to) => Product_Image, (product_image) => product_image.color)
 	product_images: Product_Image[]

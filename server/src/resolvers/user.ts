@@ -1,4 +1,3 @@
-import { ChangeUserProfileInput } from '../types/ChangeUserProfileInput'
 import argon2 from 'argon2'
 import {
 	Arg,
@@ -13,12 +12,14 @@ import { v4 as uuidv4 } from 'uuid'
 import { COOKIE_NAME } from '../constants'
 import { User } from '../entities/User'
 import { TokenModel } from '../models/Token'
+import { ChangeUserProfileInput } from '../types/ChangeUserProfileInput'
 import { LoginInput } from '../types/LoginInput'
 import { RegisterInput } from '../types/RegisterInput'
 import { UserMutationResponse } from '../types/UserMutationResponse'
 import { validateRegisterInput } from '../utils/validateRegisterInput'
 import { ChangePasswordInput } from './../types/ChangePasswordInput'
 import { Context } from './../types/Context'
+import { EditPasswordInput } from './../types/EditPasswordInput'
 import { ForgotPasswordInput } from './../types/ForgotPasswordInput'
 import { sendEmail } from './../utils/sendEmail'
 
@@ -80,6 +81,7 @@ export class UserResolver {
 			})
 
 			await newUser.save()
+
 			// Create session and return cookie
 			req.session.userId = newUser.id
 
@@ -332,11 +334,70 @@ export class UserResolver {
 				})
 			}
 
+			const userUpdated = await User.findOne({ id })
+
 			return {
 				code: 200,
 				success: true,
 				message: 'Change avatar successfully',
-				user,
+				user: userUpdated,
+			}
+		} catch (error) {
+			console.log(error)
+			return {
+				code: 500,
+				success: false,
+				message: `Internal server error ${error.message}`,
+			}
+		}
+	}
+
+	@Mutation((_return) => UserMutationResponse)
+	async editPassword(
+		@Arg('editPasswordInput')
+		{ id, password, new_password }: EditPasswordInput,
+	): Promise<UserMutationResponse> {
+		try {
+			const existingUser = await User.findOne({ id })
+
+			if (!existingUser) {
+				return {
+					code: 400,
+					success: false,
+					message: 'User not found',
+					errors: [
+						{
+							field: 'token',
+							message: 'Người dùng không còn tồn tại',
+						},
+					],
+				}
+			}
+
+			const passwordValid = await argon2.verify(existingUser.password, password)
+
+			if (!passwordValid) {
+				return {
+					code: 400,
+					success: false,
+					message: 'Wrong password',
+					errors: [
+						{
+							field: 'password',
+							message: 'Mật khẩu không đúng.',
+						},
+					],
+				}
+			}
+
+			existingUser.password = await argon2.hash(new_password)
+			await existingUser.save()
+
+			return {
+				code: 200,
+				success: true,
+				message: 'edit password in successfully',
+				user: existingUser,
 			}
 		} catch (error) {
 			console.log(error)

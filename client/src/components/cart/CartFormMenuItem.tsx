@@ -7,13 +7,13 @@ import {
 	MenuItem,
 	MenuList,
 } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { IMenu } from '../../interface/menu'
 import styles from '../../styles/cart/CartFormMenuItem.module.scss'
 
 interface ICartFormMenuItemProps {
 	menus?: IMenu[]
-	initAddress: string
+	initAddress: IMenu
 	placeholder: string
 	changeAddress?: any
 }
@@ -24,9 +24,15 @@ const CartFormMenuItem = ({
 	placeholder,
 	changeAddress,
 }: ICartFormMenuItemProps) => {
-	const [address, setAddress] = useState({ id: '-1', name: initAddress })
-	const [key, setKey] = useState('')
-	console.log(key)
+	const [address, setAddress] = useState(initAddress)
+	const [searchTerm, setSearchTerm] = useState('')
+	const searchTimeOutRef: any = useRef('')
+	const [menuArray, setMenuArray] = useState(menus)
+
+	useEffect(() => {
+		setMenuArray(menus)
+		setAddress(initAddress)
+	}, [menus])
 
 	if (changeAddress) {
 		useEffect(() => {
@@ -34,9 +40,26 @@ const CartFormMenuItem = ({
 		}, [address])
 	}
 
+	const handleSearch = (e: any) => {
+		setSearchTerm(e.target.value)
+
+		if (searchTimeOutRef.current) {
+			clearTimeout(searchTimeOutRef.current)
+		}
+
+		searchTimeOutRef.current = setTimeout(() => {
+			if (searchTerm && menus) {
+				const newArray = menus.filter((item) =>
+					item.name.toLowerCase().includes(searchTerm.toLowerCase()),
+				)
+				setMenuArray(newArray)
+			}
+		}, 300)
+	}
+
 	return (
 		<Menu>
-			<MenuButton className={styles.form_menu_btn}>
+			<MenuButton className={styles.form_menu_btn} type='button'>
 				<span>{address.name}</span>
 				<i className={`bx bx-chevron-down ${styles.form_menu_btn_icon}`}></i>
 			</MenuButton>
@@ -45,15 +68,16 @@ const CartFormMenuItem = ({
 					<Input
 						placeholder={placeholder}
 						className={styles.form_input}
-						onChange={(e: any) => setKey(e.target.value)}
+						value={searchTerm}
+						onChange={handleSearch}
 					/>
 					<i className={`bx bx-search-alt ${styles.form_menu_search_icon}`}></i>
 				</Box>
 				<Grid
 					templateColumns='repeat(2, 1fr)'
 					className={styles.form_menu_content_wrapper}>
-					{menus &&
-						menus.map((item) => (
+					{menuArray &&
+						menuArray.map((item) => (
 							<MenuItem key={item.id} onClick={() => setAddress(item)}>
 								{item.name}
 							</MenuItem>

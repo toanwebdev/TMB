@@ -8,17 +8,17 @@ export const validateRegisterInput = (registerInput: RegisterInput) => {
 		}
 	}
 
-	if (registerInput.username.length <= 6) {
+	if (registerInput.username.length <= 4) {
 		return {
-			message: 'Invalid password',
-			errors: [{ field: 'username', message: 'Độ dài phải lớn hơn 6 ký tự' }],
+			message: 'Invalid username',
+			errors: [{ field: 'username', message: 'Độ dài phải lớn hơn 4 ký tự' }],
 		}
 	}
 
-	if (registerInput.password.length <= 6) {
+	if (registerInput.password.length <= 4) {
 		return {
 			message: 'Invalid password',
-			errors: [{ field: 'password', message: 'Độ dài phải lớn hơn 6 ký tự' }],
+			errors: [{ field: 'password', message: 'Độ dài phải lớn hơn 4 ký tự' }],
 		}
 	}
 

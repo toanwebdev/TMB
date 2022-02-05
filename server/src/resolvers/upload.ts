@@ -18,7 +18,7 @@ export class UploadResolver {
 			createReadStream()
 				.pipe(
 					createWriteStream(
-						`${__dirname}/../../../client/public/images/${uploadName}`,
+						path.join(process.cwd(), `/../client/public/images/${uploadName}`),
 					),
 				)
 				.on('finish', () => {

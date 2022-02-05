@@ -1,0 +1,107 @@
+.wrapper {
+	position: absolute;
+	z-index: 999;
+	background-color: rgba(0, 0, 0, 0.1);
+	width: 100vw;
+	height: 100vh;
+}
+
+.content {
+	position: relative;
+	width: 55px;
+	height: 55px;
+
+	span {
+		position: absolute;
+		top: 0;
+		left: 0;
+
+		width: 100%;
+		height: 100%;
+		transform: rotate(45deg);
+
+		&:nth-child(2) {
+			transform: rotate(90deg);
+		}
+
+		&:nth-child(3) {
+			transform: rotate(135deg);
+		}
+
+		&:nth-child(4) {
+			transform: rotate(180deg);
+		}
+
+		&:nth-child(5) {
+			transform: rotate(225deg);
+		}
+
+		&:nth-child(6) {
+			transform: rotate(270deg);
+		}
+
+		&:nth-child(7) {
+			transform: rotate(315deg);
+		}
+
+		&:last-child {
+			transform: rotate(360deg);
+		}
+
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+
+			width: 15px;
+			height: 15px;
+			border: 4px solid #00aefd;
+			border-radius: 100%;
+			filter: hue-rotate(45deg);
+			animation: loading 1s infinite;
+			animation-delay: 0.125s;
+			animation-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+		}
+
+		&:nth-child(2)::before {
+			filter: hue-rotate(90deg);
+			animation-delay: 0.25s;
+		}
+
+		&:nth-child(3)::before {
+			filter: hue-rotate(135deg);
+			animation-delay: 0.375s;
+		}
+		&:nth-child(4)::before {
+			filter: hue-rotate(180deg);
+			animation-delay: 0.5s;
+		}
+
+		&:nth-child(5)::before {
+			filter: hue-rotate(225deg);
+			animation-delay: 0.625s;
+		}
+
+		&:nth-child(6)::before {
+			filter: hue-rotate(270deg);
+			animation-delay: 0.75s;
+		}
+
+		&:nth-child(7)::before {
+			filter: hue-rotate(315deg);
+			animation-delay: 0.875s;
+		}
+
+		&:last-child::before {
+			filter: hue-rotate(360deg);
+			animation-delay: 1s;
+		}
+	}
+}
+
+@keyframes loading {
+	to {
+		transform: scale(0);
+	}
+}

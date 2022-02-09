@@ -39,10 +39,10 @@ const UploadImage = ({
 
 	const [del, setDel] = useState(false)
 	const [handleDel, setHandleDel] = useState(false)
+	console.log(handleDel)
 
 	const handleChangeImage = (e: any) => {
 		const fileItem = e.target.files[0]
-		console.log(fileItem)
 
 		if (fileItem) {
 			const reader = new FileReader()
@@ -67,7 +67,7 @@ const UploadImage = ({
 	}
 
 	useEffect(() => {
-		if (file) {
+		if ((file || value) && (image || del)) {
 			handleUploadImage(id, file, image, del, index)
 		}
 	}, [image, handleDel])

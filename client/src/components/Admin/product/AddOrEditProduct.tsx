@@ -408,7 +408,7 @@ const AddOrEditProduct = ({ item }: IAddOrEditProductProps) => {
 
 						{/* image color */}
 
-						<Box mt={4} className={colors.length > 0 ? styles.hidden : ''}>
+						<Box mt={4} className={colors.length === 0 ? styles.hidden : ''}>
 							<Box mb={2} className={styles.name}>
 								Ảnh sản phẩm
 								<span className={styles.name_required}>*</span>

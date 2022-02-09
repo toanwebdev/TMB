@@ -1,3 +1,4 @@
+import { Category } from './Category'
 import { MaxLength } from 'class-validator'
 import { Field, ID, ObjectType } from 'type-graphql'
 import {
@@ -11,7 +12,6 @@ import {
 	UpdateDateColumn,
 } from 'typeorm'
 import { Brand } from './Brand'
-import { Category_Product } from './Category_Product'
 import { Order_Product } from './Order_Product'
 import { Product_Color } from './Product_Color'
 import { Product_Image } from './Product_Image'
@@ -92,14 +92,19 @@ export class Product extends BaseEntity {
 	@ManyToOne((_to) => User, (user_updated) => user_updated.product_updateds)
 	user_updated!: User
 
+	@Field()
+	@Column()
+	brandId!: number
+
 	@ManyToOne((_to) => Brand, (brand) => brand.products)
 	brand!: Brand
 
-	@OneToMany(
-		(_to) => Category_Product,
-		(category_product) => category_product.product,
-	)
-	category_products: Category_Product[]
+	@Field()
+	@Column()
+	categoryId!: number
+
+	@ManyToOne((_to) => Category, (category) => category.products)
+	category: Category[]
 
 	@OneToMany((_to) => Product_Color, (product_color) => product_color.product)
 	product_colors: Product_Color[]

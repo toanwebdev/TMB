@@ -12,6 +12,7 @@ export interface IProduct {
 	highlight: boolean
 	new: boolean
 	gift: number
+	categoryId: number
 	brandId: number
 }
 

@@ -15,7 +15,6 @@ import { createConnection } from 'typeorm'
 import { COOKIE_NAME, __prod__ } from './constants'
 import { Brand } from './entities/Brand'
 import { Category } from './entities/Category'
-import { Category_Product } from './entities/Category_Product'
 import { Color } from './entities/Color'
 import { District } from './entities/District'
 import { Order } from './entities/Order'
@@ -38,6 +37,9 @@ import { buildDataLoaders } from './utils/dataLoaders'
 import { UserRoleResolver } from './resolvers/userRole'
 import { RoleResolver } from './resolvers/role'
 import { Product_Color } from './entities/Product_Color'
+import { CategoryResolver } from './resolvers/category'
+import { BrandResolver } from './resolvers/brand'
+import { ColorResolver } from './resolvers/color'
 
 require('dotenv').config()
 
@@ -67,7 +69,6 @@ async function main() {
 			User,
 			Brand,
 			Category,
-			Category_Product,
 			Color,
 			Product_Color,
 			Province,
@@ -133,6 +134,9 @@ async function main() {
 				VillageResolver,
 				UserRoleResolver,
 				RoleResolver,
+				CategoryResolver,
+				BrandResolver,
+				ColorResolver,
 			],
 			validate: false,
 		}),

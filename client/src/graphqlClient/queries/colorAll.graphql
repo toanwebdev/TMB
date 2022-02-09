@@ -1,0 +1,6 @@
+query ColorAll {
+	colorAll {
+		id
+		name
+	}
+}

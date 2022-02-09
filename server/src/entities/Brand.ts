@@ -5,10 +5,12 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	ManyToOne,
 	OneToMany,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm'
+import { Category } from './Category'
 import { Product } from './Product'
 
 @ObjectType()
@@ -30,6 +32,13 @@ export class Brand extends BaseEntity {
 
 	@OneToMany((_to) => Product, (product) => product.brand)
 	products!: Product[]
+
+	@Field()
+	@Column()
+	categoryId!: number
+
+	@ManyToOne((_to) => Category, (category) => category.brands)
+	category!: Category
 
 	@Field()
 	@CreateDateColumn()

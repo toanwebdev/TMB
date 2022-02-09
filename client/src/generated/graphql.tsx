@@ -24,6 +24,24 @@ export type AddUserRoleInput = {
   userId: Scalars['Float'];
 };
 
+export type Brand = {
+  __typename?: 'Brand';
+  categoryId: Scalars['Float'];
+  created_at: Scalars['DateTime'];
+  id: Scalars['ID'];
+  logo: Scalars['String'];
+  name: Scalars['String'];
+  updated_at: Scalars['DateTime'];
+};
+
+export type Category = {
+  __typename?: 'Category';
+  created_at: Scalars['DateTime'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  updated_at: Scalars['DateTime'];
+};
+
 export type ChangePasswordInput = {
   newPassword: Scalars['String'];
 };
@@ -40,6 +58,14 @@ export type ChangeUserProfileInput = {
   provinceId: Scalars['Float'];
   street: Scalars['String'];
   villageId: Scalars['Float'];
+};
+
+export type Color = {
+  __typename?: 'Color';
+  created_at: Scalars['DateTime'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  updated_at: Scalars['DateTime'];
 };
 
 export type District = {
@@ -143,6 +169,9 @@ export type Province = {
 
 export type Query = {
   __typename?: 'Query';
+  brandAll: Array<Brand>;
+  categoryAll: Array<Category>;
+  colorAll: Array<Color>;
   district: District;
   districtAll: Array<District>;
   hello: Scalars['String'];
@@ -154,6 +183,11 @@ export type Query = {
   userRole: User_Role;
   village: Village;
   villageAll: Array<Village>;
+};
+
+
+export type QueryBrandAllArgs = {
+  categoryId: Scalars['Float'];
 };
 
 
@@ -327,6 +361,23 @@ export type SingleUploadMutationVariables = Exact<{
 
 
 export type SingleUploadMutation = { __typename?: 'Mutation', singleUpload: string };
+
+export type BrandAllQueryVariables = Exact<{
+  categoryId: Scalars['Float'];
+}>;
+
+
+export type BrandAllQuery = { __typename?: 'Query', brandAll: Array<{ __typename?: 'Brand', id: string, name: string, logo: string }> };
+
+export type CategoryAllQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CategoryAllQuery = { __typename?: 'Query', categoryAll: Array<{ __typename?: 'Category', id: string, name: string }> };
+
+export type ColorAllQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ColorAllQuery = { __typename?: 'Query', colorAll: Array<{ __typename?: 'Color', id: string, name: string }> };
 
 export type DistrictQueryVariables = Exact<{
   districtId: Scalars['Float'];
@@ -733,6 +784,113 @@ export function useSingleUploadMutation(baseOptions?: Apollo.MutationHookOptions
 export type SingleUploadMutationHookResult = ReturnType<typeof useSingleUploadMutation>;
 export type SingleUploadMutationResult = Apollo.MutationResult<SingleUploadMutation>;
 export type SingleUploadMutationOptions = Apollo.BaseMutationOptions<SingleUploadMutation, SingleUploadMutationVariables>;
+export const BrandAllDocument = gql`
+    query BrandAll($categoryId: Float!) {
+  brandAll(categoryId: $categoryId) {
+    id
+    name
+    logo
+  }
+}
+    `;
+
+/**
+ * __useBrandAllQuery__
+ *
+ * To run a query within a React component, call `useBrandAllQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBrandAllQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBrandAllQuery({
+ *   variables: {
+ *      categoryId: // value for 'categoryId'
+ *   },
+ * });
+ */
+export function useBrandAllQuery(baseOptions: Apollo.QueryHookOptions<BrandAllQuery, BrandAllQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<BrandAllQuery, BrandAllQueryVariables>(BrandAllDocument, options);
+      }
+export function useBrandAllLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BrandAllQuery, BrandAllQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<BrandAllQuery, BrandAllQueryVariables>(BrandAllDocument, options);
+        }
+export type BrandAllQueryHookResult = ReturnType<typeof useBrandAllQuery>;
+export type BrandAllLazyQueryHookResult = ReturnType<typeof useBrandAllLazyQuery>;
+export type BrandAllQueryResult = Apollo.QueryResult<BrandAllQuery, BrandAllQueryVariables>;
+export const CategoryAllDocument = gql`
+    query CategoryAll {
+  categoryAll {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useCategoryAllQuery__
+ *
+ * To run a query within a React component, call `useCategoryAllQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCategoryAllQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCategoryAllQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCategoryAllQuery(baseOptions?: Apollo.QueryHookOptions<CategoryAllQuery, CategoryAllQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CategoryAllQuery, CategoryAllQueryVariables>(CategoryAllDocument, options);
+      }
+export function useCategoryAllLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CategoryAllQuery, CategoryAllQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CategoryAllQuery, CategoryAllQueryVariables>(CategoryAllDocument, options);
+        }
+export type CategoryAllQueryHookResult = ReturnType<typeof useCategoryAllQuery>;
+export type CategoryAllLazyQueryHookResult = ReturnType<typeof useCategoryAllLazyQuery>;
+export type CategoryAllQueryResult = Apollo.QueryResult<CategoryAllQuery, CategoryAllQueryVariables>;
+export const ColorAllDocument = gql`
+    query ColorAll {
+  colorAll {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useColorAllQuery__
+ *
+ * To run a query within a React component, call `useColorAllQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColorAllQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColorAllQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useColorAllQuery(baseOptions?: Apollo.QueryHookOptions<ColorAllQuery, ColorAllQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ColorAllQuery, ColorAllQueryVariables>(ColorAllDocument, options);
+      }
+export function useColorAllLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ColorAllQuery, ColorAllQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ColorAllQuery, ColorAllQueryVariables>(ColorAllDocument, options);
+        }
+export type ColorAllQueryHookResult = ReturnType<typeof useColorAllQuery>;
+export type ColorAllLazyQueryHookResult = ReturnType<typeof useColorAllLazyQuery>;
+export type ColorAllQueryResult = Apollo.QueryResult<ColorAllQuery, ColorAllQueryVariables>;
 export const DistrictDocument = gql`
     query District($districtId: Float!) {
   district(districtId: $districtId) {

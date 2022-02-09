@@ -1,0 +1,6 @@
+query CategoryAll {
+	categoryAll {
+		id
+		name
+	}
+}

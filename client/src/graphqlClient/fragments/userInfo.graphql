@@ -7,8 +7,17 @@ fragment userInfo on User {
 	gender
 	avatar
 	phone_num
-	provinceId
-	districtId
-	villageId
 	street
+	province {
+		id
+		name
+	}
+	district {
+		id
+		name
+	}
+	village {
+		id
+		name
+	}
 }

@@ -17,7 +17,7 @@ import {
 	RadioGroup,
 	Spinner,
 	Stack,
-	useDisclosure,
+	useDisclosure
 } from '@chakra-ui/react'
 import { Field, Form, Formik, FormikHelpers } from 'formik'
 import { useState } from 'react'
@@ -31,14 +31,12 @@ import {
 	MeQuery,
 	useChangeUserProfileMutation,
 	useDistrictAllQuery,
-	useDistrictQuery,
 	useProvinceAllQuery,
-	useProvinceQuery,
 	useSingleUploadMutation,
-	useVillageAllQuery,
-	useVillageQuery,
+	useVillageAllQuery
 } from '../generated/graphql'
 import { mapFieldErrors } from '../helpers/mapFieldErrors'
+import { initializeApollo } from '../lib/apolloClient'
 import styles from '../styles/auth/UserProfile.module.scss'
 import { useCheckAuth } from '../utils/useCheckAuth'
 
@@ -47,16 +45,16 @@ const UserProfile = () => {
 	const [avatar, setAvatar] = useState('')
 	const [file, setFile] = useState('')
 
-	const initProvinceId = authData?.me?.provinceId
-		? authData?.me?.provinceId.toString()
+	const initProvinceId = authData?.me?.province
+		? (authData.me.province.id as string)
 		: '-1'
 
-	const initDistrictId = authData?.me?.districtId
-		? authData?.me?.districtId.toString()
+	const initDistrictId = authData?.me?.district
+		? (authData.me.district.id as string)
 		: '-1'
 
-	const initVillageId = authData?.me?.villageId
-		? authData?.me?.villageId.toString()
+	const initVillageId = authData?.me?.village
+		? (authData.me.village.id as string)
 		: '-1'
 
 	const [provinceId, setProvinceId] = useState(initProvinceId)
@@ -78,24 +76,6 @@ const UserProfile = () => {
 		},
 	})
 
-	const { data: provinceData } = useProvinceQuery({
-		variables: {
-			provinceId: authData?.me?.provinceId ? authData.me.provinceId : -1,
-		},
-	})
-
-	const { data: districtData } = useDistrictQuery({
-		variables: {
-			districtId: authData?.me?.districtId ? authData.me.districtId : -1,
-		},
-	})
-
-	const { data: villageData } = useVillageQuery({
-		variables: {
-			villageId: authData?.me?.villageId ? authData.me.villageId : -1,
-		},
-	})
-
 	const {
 		isOpen: isOpenModal,
 		onOpen: onOpenModal,
@@ -110,9 +90,9 @@ const UserProfile = () => {
 		email: authData?.me?.email as string,
 		avatar: '',
 		phone_num: authData?.me?.phone_num ? authData.me.phone_num : '',
-		provinceId: authData?.me?.provinceId ? authData.me.provinceId : -1,
-		districtId: authData?.me?.districtId ? authData.me.districtId : -1,
-		villageId: authData?.me?.villageId ? authData.me.villageId : -1,
+		provinceId: authData?.me?.province ? parseInt(authData.me.province.id) : -1,
+		districtId: authData?.me?.district ? parseInt(authData.me.district.id) : -1,
+		villageId: authData?.me?.village ? parseInt(authData.me.village.id) : -1,
 		street: authData?.me?.street ? authData.me.street : '',
 	}
 
@@ -136,7 +116,7 @@ const UserProfile = () => {
 	) => {
 		let avatarUpload = authData?.me?.avatar as string
 		if (avatar) {
-			if (avatar !== 'null') {
+			if (avatar !== 'null' && file) {
 				await singleUpload({
 					variables: {
 						file,
@@ -165,8 +145,6 @@ const UserProfile = () => {
 				changeUserProfileInput: valuesUpdated,
 			},
 			update(cache, { data }) {
-				console.log(data?.changeUserProfile.user)
-
 				if (data?.changeUserProfile.success) {
 					cache.writeQuery<MeQuery>({
 						query: MeDocument,
@@ -190,6 +168,9 @@ const UserProfile = () => {
 				progress: undefined,
 				theme: 'colored',
 			})
+
+			const apolloClient = initializeApollo()
+			apolloClient.resetStore()
 
 			setAvatar(avatarUpload)
 			onCloseModal()
@@ -275,8 +256,8 @@ const UserProfile = () => {
 					<Grid templateColumns='repeat(2, 1fr)' mt='5px'>
 						<span className={styles.info_name}>Địa chỉ giao hàng:</span>
 						<span>
-							{authData?.me?.provinceId ? (
-								`${authData.me.street}, ${villageData?.village.name}, ${districtData?.district.name}, ${provinceData?.province.name}`
+							{authData?.me?.province ? (
+								`${authData.me.street}, ${authData.me.village?.name}, ${authData.me.district?.name}, ${authData.me.province?.name}`
 							) : (
 								<span className={styles.info_value_empty}>
 									Chưa có địa chỉ giao hàng
@@ -445,9 +426,12 @@ const UserProfile = () => {
 													<CartFormMenuItem
 														menus={provinceAllData?.provinceAll}
 														initAddress={
-															provinceData?.province
-																? provinceData.province
-																: { id: '-1', name: 'Chọn tỉnh, thành phố' }
+															authData?.me?.province
+																? authData.me.province
+																: {
+																		id: '-1',
+																		name: 'Chọn tỉnh, thành phố',
+																  }
 														}
 														placeholder='Nhập tỉnh, thành để tìm kiếm nhanh'
 														changeAddress={(id: any) => setProvinceId(id)}
@@ -455,8 +439,9 @@ const UserProfile = () => {
 													<CartFormMenuItem
 														menus={districtAllData?.districtAll}
 														initAddress={
-															districtData?.district
-																? districtData.district
+															authData?.me?.district &&
+															authData?.me?.province?.id === provinceId
+																? authData.me.district
 																: { id: '-1', name: 'Chọn quận, huyện' }
 														}
 														placeholder='Nhập quận, huyện để tìm kiếm nhanh'
@@ -465,8 +450,10 @@ const UserProfile = () => {
 													<CartFormMenuItem
 														menus={villageAllData?.villageAll}
 														initAddress={
-															villageData?.village
-																? villageData.village
+															authData?.me?.village &&
+															authData?.me?.province?.id === provinceId &&
+															authData?.me?.district?.id === districtId
+																? authData.me.village
 																: { id: '-1', name: 'Chọn phường, xã' }
 														}
 														placeholder='Nhập phường, xã để tìm kiếm nhanh'

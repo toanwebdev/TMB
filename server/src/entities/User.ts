@@ -84,22 +84,25 @@ export class User extends BaseEntity {
 	@Column({ nullable: true })
 	provinceId: number
 
+	@Field((_type) => Province, { nullable: true })
 	@ManyToOne((_to) => Province, (province) => province.users)
-	province!: Province
+	province: Province
 
 	@Field({ nullable: true })
 	@Column({ nullable: true })
 	districtId: number
 
+	@Field((_type) => District, { nullable: true })
 	@ManyToOne((_to) => District, (district) => district.users)
-	district!: District
+	district: District
 
 	@Field({ nullable: true })
 	@Column({ nullable: true })
 	villageId: number
 
+	@Field((_type) => Village, { nullable: true })
 	@ManyToOne((_to) => Village, (village) => village.users)
-	village!: Village
+	village: Village
 
 	@Field({ nullable: true })
 	@Column({ nullable: true, length: 100 })

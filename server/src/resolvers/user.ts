@@ -31,9 +31,11 @@ export class UserResolver {
 	}
 
 	@Query((_return) => User, { nullable: true })
-	async me(@Ctx() { req }: Context): Promise<User | undefined | null> {
+	async me(@Ctx() { req }: Context): Promise<User | undefined | null | any> {
 		if (!req.session.userId) return null
-		const user = await User.findOne(req.session.userId)
+		const user = await User.findOne(req.session.userId, {
+			relations: ['province', 'district', 'village'],
+		})
 		return user
 	}
 
@@ -334,7 +336,10 @@ export class UserResolver {
 				})
 			}
 
-			const userUpdated = await User.findOne({ id })
+			const userUpdated = await User.findOne(
+				{ id },
+				{ relations: ['province', 'district', 'village'] },
+			)
 
 			return {
 				code: 200,

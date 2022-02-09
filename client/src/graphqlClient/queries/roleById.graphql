@@ -1,6 +1,0 @@
-query RoleById($id: Float!) {
-	roleById(id: $id) {
-		id
-		name
-	}
-}

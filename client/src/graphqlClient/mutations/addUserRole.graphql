@@ -1,6 +1,0 @@
-mutation AddUserRole($addUserRoleInput: AddUserRoleInput!) {
-	addUserRole(addUserRoleInput: $addUserRoleInput) {
-		userId
-		roleId
-	}
-}

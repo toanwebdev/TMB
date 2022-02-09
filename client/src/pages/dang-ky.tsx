@@ -19,11 +19,10 @@ import {
 	MeDocument,
 	MeQuery,
 	RegisterInput,
-	useAddUserRoleMutation,
 	useRegisterMutation,
-	useRoleByNameQuery,
 } from '../generated/graphql'
 import { mapFieldErrors } from '../helpers/mapFieldErrors'
+import { initializeApollo } from '../lib/apolloClient'
 import styles from '../styles/auth/Register.module.scss'
 import { useCheckAuth } from '../utils/useCheckAuth'
 
@@ -43,10 +42,6 @@ const Register = () => {
 	}
 
 	const [registerUser] = useRegisterMutation()
-	const { data: roleData, loading: roleLoading } = useRoleByNameQuery({
-		variables: { name: 'user' },
-	})
-	const [addUserRole] = useAddUserRoleMutation()
 
 	const onRegisterSubmit = async (
 		values: RegisterInput,
@@ -70,33 +65,21 @@ const Register = () => {
 			setErrors(mapFieldErrors(response.data.register.errors))
 		} else if (response.data?.register.user) {
 			// register successfully
-			if (!roleLoading && roleData) {
-				const res = await addUserRole({
-					variables: {
-						addUserRoleInput: {
-							userId: parseInt(response.data.register.user.id),
-							roleId: parseInt(roleData.roleByName.id),
-						},
-					},
-				})
+			toast.success(`Xin chào ${response.data.register.user.first_name} 😎😎`, {
+				position: 'top-center',
+				autoClose: 3000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: 'colored',
+			})
 
-				if (res.data?.addUserRole) {
-					toast.success(
-						`Xin chào ${response.data.register.user.first_name} 😎😎`,
-						{
-							position: 'top-center',
-							autoClose: 3000,
-							hideProgressBar: false,
-							closeOnClick: true,
-							pauseOnHover: true,
-							draggable: true,
-							progress: undefined,
-							theme: 'colored',
-						},
-					)
-					router.push('/')
-				}
-			}
+			const apolloClient = initializeApollo()
+			apolloClient.resetStore()
+
+			router.push('/')
 		}
 	}
 

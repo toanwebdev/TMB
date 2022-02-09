@@ -1,6 +1,0 @@
-query RoleByName($name: String!) {
-	roleByName(name: $name) {
-		id
-		name
-	}
-}

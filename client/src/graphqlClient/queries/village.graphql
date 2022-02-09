@@ -1,6 +1,0 @@
-query Village($villageId: Float!) {
-	village(villageId: $villageId) {
-		id
-		name
-	}
-}

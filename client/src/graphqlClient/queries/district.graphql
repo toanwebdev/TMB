@@ -1,6 +1,0 @@
-query District($districtId: Float!) {
-	district(districtId: $districtId) {
-		id
-		name
-	}
-}

@@ -1,5 +1,3 @@
-import { VillageResolver } from './resolvers/village'
-import { DistrictResolver } from './resolvers/district'
 import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core'
 import { ApolloServer } from 'apollo-server-express'
 import MongoStore from 'connect-mongo'
@@ -20,6 +18,7 @@ import { District } from './entities/District'
 import { Order } from './entities/Order'
 import { Order_Product } from './entities/Order_Product'
 import { Product } from './entities/Product'
+import { Product_Color } from './entities/Product_Color'
 import { Product_Image } from './entities/Product_Image'
 import { Province } from './entities/Province'
 import { Role } from './entities/Role'
@@ -28,19 +27,16 @@ import { Slider_Image } from './entities/Slider_Image'
 import { User } from './entities/User'
 import { User_Role } from './entities/User_Role'
 import { Village } from './entities/Village'
-import { HelloResolver } from './resolvers/hello'
+import { BrandResolver } from './resolvers/brand'
+import { CategoryResolver } from './resolvers/category'
+import { ColorResolver } from './resolvers/color'
+import { DistrictResolver } from './resolvers/district'
 import { ProvinceResolver } from './resolvers/province'
 import { UploadResolver } from './resolvers/upload'
 import { UserResolver } from './resolvers/user'
+import { VillageResolver } from './resolvers/village'
 import { Context } from './types/Context'
 import { buildDataLoaders } from './utils/dataLoaders'
-import { UserRoleResolver } from './resolvers/userRole'
-import { RoleResolver } from './resolvers/role'
-import { Product_Color } from './entities/Product_Color'
-import { CategoryResolver } from './resolvers/category'
-import { BrandResolver } from './resolvers/brand'
-import { ColorResolver } from './resolvers/color'
-
 require('dotenv').config()
 
 async function main() {
@@ -126,14 +122,11 @@ async function main() {
 	const apolloServer = new ApolloServer({
 		schema: await buildSchema({
 			resolvers: [
-				HelloResolver,
 				UserResolver,
 				UploadResolver,
 				ProvinceResolver,
 				DistrictResolver,
 				VillageResolver,
-				UserRoleResolver,
-				RoleResolver,
 				CategoryResolver,
 				BrandResolver,
 				ColorResolver,

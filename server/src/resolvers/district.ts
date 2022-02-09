@@ -9,11 +9,4 @@ export class DistrictResolver {
 	): Promise<District[] | undefined> {
 		return await District.find({ provinceId })
 	}
-
-	@Query((_return) => District)
-	async district(
-		@Arg('districtId') districtId: number,
-	): Promise<District | undefined> {
-		return await District.findOne({ id: districtId })
-	}
 }

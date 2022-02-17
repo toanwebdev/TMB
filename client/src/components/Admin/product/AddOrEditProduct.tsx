@@ -4,74 +4,157 @@ import {
 	Checkbox,
 	Flex,
 	Grid,
+	IconButton,
+	Input,
 	Link,
+	NumberDecrementStepper,
+	NumberIncrementStepper,
+	NumberInput,
+	NumberInputField,
+	NumberInputStepper,
 	Select,
+	Spinner,
 	Stack,
 	Tab,
 	TabList,
 	TabPanel,
 	TabPanels,
 	Tabs,
+	Textarea,
+	Tooltip,
 } from '@chakra-ui/react'
 import { Editor } from '@tinymce/tinymce-react'
 import { Field, Form, Formik } from 'formik'
 import NextLink from 'next/link'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import slugify from 'slugify'
+import { toast } from 'react-toastify'
 import {
-	useBrandAllQuery,
+	useAddProductColorsMutation,
+	useAddProductImagesMutation,
+	useAddProductMutation,
+	useAddPromotionMutation,
+	useAddSpecificationsMutation,
+	useBrandByIdsQuery,
+	useBrandCategoriesQuery,
 	useCategoryAllQuery,
 	useColorAllQuery,
+	useColorByIdsQuery,
+	useMultipleUploadMutation,
 	useSingleUploadMutation,
 } from '../../../generated/graphql'
-import { IProduct } from '../../../interface/product'
+import { IGetProduct } from '../../../interface/product'
+import { initializeApollo } from '../../../lib/apolloClient'
 import styles from '../../../styles/Admin/product/AddOrEdit.module.scss'
+import slugify from '../../../utils/slugify'
+import { useCheckAuth } from '../../../utils/useCheckAuth'
 import InputField from '../../InputField'
 import UploadImage from './UploadImage'
 
 interface IAddOrEditProductProps {
-	item?: IProduct
+	product?: IGetProduct
 }
 
-const AddOrEditProduct = ({ item }: IAddOrEditProductProps) => {
-	const [nameProduct, setNameProduct] = useState('')
-	const [slugProduct, setSlugProduct] = useState('')
-	const [description, setDescription] = useState(item?.description)
-	const [categoryId, setCategoryId] = useState('-1')
+const AddOrEditProduct = ({ product }: IAddOrEditProductProps) => {
+	const router = useRouter()
+	const { data: authData, loading: authLoading } = useCheckAuth()
+	console.log(product)
 
-	const initColors: Array<{ id: string; name: string }> = []
+	const initName = product ? product.name : ''
+	const [nameProduct, setNameProduct] = useState(initName)
+
+	const initSlug = product ? product.slug : ''
+	const [slugProduct, setSlugProduct] = useState(initSlug)
+	const initDescription = product ? product.description : ''
+	const [description, setDescription] = useState(initDescription)
+
+	const initCategoryId = product ? product.category.id : '-1'
+	const [categoryId, setCategoryId] = useState(initCategoryId)
+
+	let colorIds: Array<number> = []
+	if (product && product.product_colors) {
+		for (let i = 0; i < product.product_colors.length; i++) {
+			colorIds = [...colorIds, product.product_colors[i].colorId as number]
+		}
+	}
+
+	let colorByIds: Array<{ id: string; name: string }> = []
+	if (product) {
+		const {data: colorByIdsData} = useColorByIdsQuery({
+			variables: {
+				colorByIdsInput: { colorIds },
+			},
+		})
+
+		if(colorByIdsData && colorByIdsData.colorByIds) {
+			colorByIds = colorByIdsData.colorByIds
+		}
+	}
+
+	const initColors: Array<{ id: string; name: string }> = colorByIds
 	const [colors, setColors] = useState(initColors)
 
 	const initFiles: Array<{
 		id: string
 		fileItems: Array<any>
 		images: Array<string>
-	}> = []
+	}> = [{ id: '-1', fileItems: [''], images: [''] }]
 	const [files, setFiles] = useState(initFiles)
-	console.log(files)
+
+	const initSpecis: Array<{ name: string; content: string }> = [
+		{ name: '', content: '' },
+	]
+	const [specis, setSpecis] = useState(initSpecis)
+
+	const initPromotions: Array<string> = ['']
+	const [promotions, setPromotions] = useState(initPromotions)
 
 	const initialValues = {
-		name: item ? item.name : '',
-		slug: item ? item.slug : '',
-		avatar: item ? item.avatar : '',
-		price_input: item ? item.price_input : 0,
-		discount: item ? item.discount : 0,
-		price: item ? item.price : 0,
-		gift: item ? item.gift : 0,
-		categoryId: item ? item.categoryId : -1,
-		brandId: item ? item.brandId : -1,
-		installment: item?.installment,
-		best_sell: item?.best_sell,
-		highlight: item?.highlight,
-		new: item?.new,
+		name: product ? product.name : '',
+		slug: product ? product.slug : '',
+		avatar: product ? product.avatar : '',
+		description: product ? product.description : '',
+		price_input: product ? product.price_input.toString() : '0',
+		discount: product ? (product.discount as number).toString() : '0',
+		price: product ? product.price.toString() : '0',
+		gift: product ? (product.gift as number).toString() : '0',
+		quantity: product ? product.quantity.toString() : '0',
+		categoryId: product ? product.category.id : '-1',
+		brandId: product ? product.brand.id : '-1',
+		installment: product ? product.installment : false,
+		best_sell: product ? product.best_sell : false,
+		highlight: product ? product.highlight : false,
+		new: product ? product.new : false,
+		userCreatedId: product
+			? parseInt(product.user_created.id)
+			: parseInt(authData?.me?.id as string),
+		userUpdatedId: parseInt(authData?.me?.id as string),
 	}
 
 	const [singleUpload] = useSingleUploadMutation()
 	const { data: categoryAllData } = useCategoryAllQuery()
-	const { data: brandAllData } = useBrandAllQuery({
+	const { data: brandCategoriesData } = useBrandCategoriesQuery({
 		variables: { categoryId: parseInt(categoryId) },
 	})
+	let brandIds: Array<number> = []
+	let brandCategories = brandCategoriesData
+		? brandCategoriesData.brandCategories
+		: []
+	for (let i = 0; i < brandCategories.length; i++) {
+		brandIds = [...brandIds, brandCategories[i].brandId as number]
+	}
+
+	const { data: brandByIdsData } = useBrandByIdsQuery({
+		variables: { brandByIdsInput: { brandIds } },
+	})
 	const { data: colorAllData } = useColorAllQuery()
+
+	const [multipleUpload] = useMultipleUploadMutation()
+	const [addProductColors] = useAddProductColorsMutation()
+	const [addProductImages] = useAddProductImagesMutation()
+	const [addProduct] = useAddProductMutation()
+	const [addSpecifications] = useAddSpecificationsMutation()
+	const [addPromotion] = useAddPromotionMutation()
 
 	const handleUpload = (cb: any) => {
 		let input = document.createElement('input')
@@ -136,12 +219,12 @@ const AddOrEditProduct = ({ item }: IAddOrEditProductProps) => {
 				let checkFile = false
 				for (let i = 0; i < files.length; i++) {
 					if (files[i].id === id) {
-						if (id === '-1') {
-							files[i].fileItems[0] = file
-							files[i].images[0] = image
+						if (id !== '-1') {
+							files[i].fileItems.splice(index + 1, 0, file)
+							files[i].images.splice(index + 1, 0, image)
 						} else {
-							files[i].fileItems = [...files[i].fileItems, file]
-							files[i].images = [...files[i].images, image]
+							files[i].fileItems.splice(index, 1, file)
+							files[i].images.splice(index, 1, image)
 						}
 
 						checkFile = true
@@ -159,25 +242,18 @@ const AddOrEditProduct = ({ item }: IAddOrEditProductProps) => {
 		} else {
 			for (let i = 0; i < files.length; i++) {
 				if (files[i].id === id) {
-					files[i].fileItems.splice(index, 1)
-					files[i].images.splice(index, 1)
+					if (id !== '-1') {
+						files[i].fileItems.splice(index, 1, 'del')
+						files[i].images.splice(index, 1, 'del')
+					} else {
+						files[i].fileItems.splice(index, 1, 'del', '')
+						files[i].images.splice(index, 1, 'del', '')
+					}
 					setFiles([...files])
 					break
 				}
 			}
 		}
-	}
-
-	const findCountById = (id: string) => {
-		if (files.length !== 0) {
-			for (let i = 0; i < files.length; i++) {
-				if (files[i].id === id) {
-					return files[i].fileItems.length + 1
-				}
-			}
-		}
-
-		return 1
 	}
 
 	const findImagesById = (id: string) => {
@@ -189,7 +265,7 @@ const AddOrEditProduct = ({ item }: IAddOrEditProductProps) => {
 			}
 		}
 
-		return ''
+		return []
 	}
 
 	const findFilesById = (id: string) => {
@@ -201,32 +277,213 @@ const AddOrEditProduct = ({ item }: IAddOrEditProductProps) => {
 			}
 		}
 
-		return ''
+		return []
+	}
+
+	const handleChangeSpeci = (e: any, index: number) => {
+		if (e.target.name === 'name') {
+			specis.splice(index, 1, {
+				name: e.target.value,
+				content: specis[index].content,
+			})
+		} else {
+			specis.splice(index, 1, {
+				name: specis[index].name,
+				content: e.target.value,
+			})
+		}
+
+		setSpecis([...specis])
+	}
+
+	const handleClickSpeci = (index: number, action: string) => {
+		if (action === 'add') {
+			specis.splice(index + 1, 0, { name: '', content: '' })
+		} else {
+			specis.splice(index, 1, { name: 'del', content: 'del' })
+		}
+
+		setSpecis([...specis])
+	}
+
+	const handleChangePromotion = (e: any, index: number) => {
+		promotions.splice(index, 1, e.target.value)
+		setPromotions([...promotions])
+	}
+
+	const handleClickPromotion = (index: number, action: string) => {
+		if (action === 'add') {
+			promotions.splice(index + 1, 0, '')
+		} else {
+			promotions.splice(index, 1, 'del')
+		}
+
+		setPromotions([...promotions])
 	}
 
 	const onAddOrEditProductSubmit = async (values: any) => {
+		let fileUploads: Array<any> = []
+
+		for (let i = 0; i < files.length; i++) {
+			for (let j = 0; j < files[i].fileItems.length; j++) {
+				if (files[i].fileItems[j] !== 'del') {
+					fileUploads = [...fileUploads, files[i].fileItems[j]]
+				}
+			}
+		}
+
+		const multipleUploadData = await multipleUpload({
+			variables: {
+				files: fileUploads,
+			},
+		})
+
+		let avatar = multipleUploadData.data
+			? (multipleUploadData.data?.multipleUpload[0] as string)
+			: ''
+
 		const updateValues = {
 			...values,
 			name: nameProduct,
 			slug: slugProduct,
-			price_input: parseInt(values.price_input),
-			price: parseInt(values.price),
-			discount: parseInt(values.discount),
-			gift: parseInt(values.gift),
+			avatar,
 			categoryId: parseInt(categoryId),
 			brandId: parseInt(values.brandId),
+			price_input: parseInt(values.price_input),
+			discount: parseInt(values.discount),
+			price: parseInt(values.price),
+			gift: parseInt(values.gift),
+			quantity: parseInt(values.quantity),
+			description,
 		}
-		console.log(updateValues)
+
+		const addProductData = await addProduct({
+			variables: {
+				addProductInput: updateValues,
+			},
+		})
+
+		let colorIds: Array<number> = []
+		for (let i = 0; i < colors.length; i++) {
+			colorIds = [...colorIds, parseInt(colors[i].id)]
+		}
+
+		await addProductColors({
+			variables: {
+				addProductColorsInput: {
+					productId: parseInt(
+						addProductData.data?.addProduct.product?.id as string,
+					),
+					colorIds,
+				},
+			},
+		})
+
+		let colorLinks: Array<{ id: number; links: string[] }> = []
+		let vtColor = 0
+		for (let i = 1; i < files.length; i++) {
+			let newColorLinks: { id: number; links: string[] } = {
+				id: -1,
+				links: [],
+			}
+
+			newColorLinks.id = parseInt(files[i].id)
+			for (let j = 0; j < files[i].fileItems.length; j++) {
+				if (files[i].fileItems[j] !== '' && files[i].fileItems[j] !== 'del') {
+					vtColor++
+					newColorLinks.links = [
+						...newColorLinks.links,
+						multipleUploadData.data?.multipleUpload[vtColor] as string,
+					]
+				}
+			}
+			colorLinks = [...colorLinks, newColorLinks]
+		}
+
+		await addProductImages({
+			variables: {
+				addProductImagesInput: {
+					productId: parseInt(
+						addProductData.data?.addProduct.product?.id as string,
+					),
+					colorLinks,
+				},
+			},
+		})
+
+		let newSpecis: Array<{ name: string; content: string }> = []
+		for (let i = 0; i < specis.length; i++) {
+			if (specis[i].name !== '' && specis[i].name !== 'del') {
+				newSpecis = [...newSpecis, specis[i]]
+			}
+		}
+		await addSpecifications({
+			variables: {
+				addSpecificationsInput: {
+					productId: parseInt(
+						addProductData.data?.addProduct.product?.id as string,
+					),
+					specis: newSpecis,
+				},
+			},
+		})
+
+		let newPromotions: Array<string> = []
+		for (let i = 0; i < promotions.length; i++) {
+			if (promotions[i] !== '' && promotions[i] !== 'del') {
+				newPromotions = [...newPromotions, promotions[i]]
+			}
+		}
+
+		await addPromotion({
+			variables: {
+				addPromotionInput: {
+					productId: parseInt(
+						addProductData.data?.addProduct.product?.id as string,
+					),
+					contents: newPromotions,
+				},
+			},
+		})
+
+		if (addProductData.data?.addProduct.product) {
+			toast.success(
+				`${product ? 'Chỉnh sửa' : 'Thêm'} sản phẩm thành công thành công 😍😍`,
+				{
+					position: 'top-right',
+					autoClose: 3000,
+					hideProgressBar: false,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: 'colored',
+				},
+			)
+
+			const apolloClient = initializeApollo()
+			apolloClient.resetStore()
+
+			router.push('/quan-tri/san-pham')
+		}
 	}
 
 	useEffect(() => {
 		setSlugProduct(slugify(nameProduct))
 	}, [nameProduct])
 
+	if (authLoading || (!authLoading && !authData?.me)) {
+		return (
+			<Flex justifyContent='center' alignItems='center' minHeight='100vh'>
+				<Spinner />
+			</Flex>
+		)
+	}
+
 	return (
 		<Box className={styles.wrapper}>
 			<Box className={styles.title}>
-				{item ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm'}
+				{product ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm'}
 			</Box>
 
 			<Formik initialValues={initialValues} onSubmit={onAddOrEditProductSubmit}>
@@ -316,6 +573,31 @@ const AddOrEditProduct = ({ item }: IAddOrEditProductProps) => {
 							{/* gift */}
 						</Grid>
 
+						{/* quantity */}
+						<Box mt={4}>
+							<Box mb={2} className={styles.name}>
+								Số lượng
+								<span className={styles.name_required}>*</span>
+							</Box>
+							<NumberInput
+								min={0}
+								defaultValue={product ? product.quantity : 0}
+								maxW='100px'
+								isRequired>
+								<Field
+									as={NumberInputField}
+									name='quantity'
+									placeholder='Số lượng'
+									type='text'
+								/>
+								<NumberInputStepper>
+									<NumberIncrementStepper />
+									<NumberDecrementStepper />
+								</NumberInputStepper>
+							</NumberInput>
+						</Box>
+						{/* quantity */}
+
 						<Grid templateColumns='repeat(2, 1fr)' gap='80px'>
 							{/* loại sản phẩm */}
 							<Box mt={4}>
@@ -350,7 +632,7 @@ const AddOrEditProduct = ({ item }: IAddOrEditProductProps) => {
 									name='brandId'
 									placeholder='Chọn thương hiệu'
 									isRequired>
-									{brandAllData?.brandAll.map((item) => (
+									{brandByIdsData?.brandByIds.map((item) => (
 										<option key={item.id} value={item.id}>
 											{item.name}
 										</option>
@@ -367,21 +649,27 @@ const AddOrEditProduct = ({ item }: IAddOrEditProductProps) => {
 									Ảnh đại diện
 									<span className={styles.name_required}>*</span>
 								</Box>
-								<UploadImage
-									id='-1'
-									index={0}
-									name={
-										findFilesById('-1').length > 0
-											? findFilesById('-1')[0].name
-											: ''
-									}
-									value={
-										findImagesById('-1').length > 0
-											? findImagesById('-1')[0]
-											: ''
-									}
-									handleUploadImage={handleUploadImage}
-								/>
+								{[...findImagesById('-1')].map((img, index) => (
+									<UploadImage
+										key={index}
+										index={index}
+										id={'-1'}
+										name={
+											product
+												? product.name
+												: findFilesById('-1').length > 0
+												? index < findFilesById('-1').length
+													? findFilesById('-1')[index].name
+													: ''
+												: ''
+										}
+										value={product ? product.avatar : img}
+										handleUploadImage={handleUploadImage}
+										className={
+											findImagesById('-1')[index] === 'del' ? styles.hidden : ''
+										}
+									/>
+								))}
 							</Box>
 							{/* avatar */}
 
@@ -397,7 +685,8 @@ const AddOrEditProduct = ({ item }: IAddOrEditProductProps) => {
 											key={item.id}
 											name={item.name}
 											value={item.id}
-											onChange={handleChecked}>
+											onChange={handleChecked}
+											defaultIsChecked={colorIds.includes(parseInt(item.id))}>
 											{item.name}
 										</Checkbox>
 									))}
@@ -407,7 +696,6 @@ const AddOrEditProduct = ({ item }: IAddOrEditProductProps) => {
 						</Grid>
 
 						{/* image color */}
-
 						<Box mt={4} className={colors.length === 0 ? styles.hidden : ''}>
 							<Box mb={2} className={styles.name}>
 								Ảnh sản phẩm
@@ -425,7 +713,7 @@ const AddOrEditProduct = ({ item }: IAddOrEditProductProps) => {
 									{colors.map((item) => (
 										<TabPanel key={item.id}>
 											<Grid templateColumns='repeat(5, 1fr)' gap='20px'>
-												{[...Array(findCountById(item.id))].map((_, index) => (
+												{[...findImagesById(item.id), ''].map((img, index) => (
 													<UploadImage
 														key={index}
 														item
@@ -438,14 +726,13 @@ const AddOrEditProduct = ({ item }: IAddOrEditProductProps) => {
 																	: ''
 																: ''
 														}
-														value={
-															findImagesById(item.id).length > 0
-																? index < findImagesById(item.id).length
-																	? findImagesById(item.id)[index]
-																	: ''
+														value={img}
+														handleUploadImage={handleUploadImage}
+														className={
+															findImagesById(item.id)[index] === 'del'
+																? styles.hidden
 																: ''
 														}
-														handleUploadImage={handleUploadImage}
 													/>
 												))}
 											</Grid>
@@ -454,8 +741,68 @@ const AddOrEditProduct = ({ item }: IAddOrEditProductProps) => {
 								</TabPanels>
 							</Tabs>
 						</Box>
-
 						{/* image color */}
+
+						{/* specifications */}
+						<Box mt={4}>
+							<Box mb={2} className={styles.name}>
+								Thông số Kỹ thuật
+								<span className={styles.name_required}>*</span>
+							</Box>
+
+							{specis.map((item, index) => (
+								<Grid
+									key={index}
+									templateColumns='1fr 2fr 0.5fr'
+									gap='20px'
+									mb={4}
+									className={specis[index].name === 'del' ? styles.hidden : ''}>
+									<Input
+										name='name'
+										value={item.name}
+										placeholder='Tên'
+										onChange={(e: any) => handleChangeSpeci(e, index)}
+										required
+									/>
+									<Textarea
+										name='content'
+										value={item.content}
+										minHeight='40px'
+										placeholder='Nội dung'
+										onChange={(e: any) => handleChangeSpeci(e, index)}
+										required
+									/>
+									<Grid templateColumns='repeat(2, 1fr)' gap='10px'>
+										<Tooltip hasArrow label='Thêm thông số'>
+											<IconButton
+												colorScheme='blue'
+												aria-label='add specifications'
+												icon={
+													<i
+														className={`bx bx-add-to-queue ${styles.btn_icon}`}></i>
+												}
+												onClick={() => handleClickSpeci(index, 'add')}
+											/>
+										</Tooltip>
+
+										{specis.length > 1 && index !== 0 && (
+											<Tooltip hasArrow label='Xóa thông số'>
+												<IconButton
+													colorScheme='red'
+													aria-label='delete specifications'
+													icon={
+														<i
+															className={`bx bx-trash-alt ${styles.btn_icon}`}></i>
+													}
+													onClick={() => handleClickSpeci(index, 'del')}
+												/>
+											</Tooltip>
+										)}
+									</Grid>
+								</Grid>
+							))}
+						</Box>
+						{/* specifications */}
 
 						{/* description */}
 						<Box mt={4}>
@@ -464,7 +811,7 @@ const AddOrEditProduct = ({ item }: IAddOrEditProductProps) => {
 							</Box>
 							<Editor
 								apiKey='1gm4ec14ey357xtl0d0kgqq7wrgep8xwarpr5pmjbihmkvx7'
-								initialValue={description}
+								initialValue={product ? product.description : ''}
 								init={{
 									height: 500,
 									menubar: true,
@@ -487,29 +834,83 @@ const AddOrEditProduct = ({ item }: IAddOrEditProductProps) => {
 						</Box>
 						{/* description */}
 
+						{/* notification */}
 						<Stack spacing={[1, 5]} direction={['column', 'row']} mt={4}>
 							<Field
 								as={Checkbox}
 								name='installment'
-								defaultChecked={item?.installment}>
+								defaultChecked={product?.installment}>
 								Trả góp
 							</Field>
 							<Field
 								as={Checkbox}
 								name='best_sell'
-								defaultChecked={item?.best_sell}>
+								defaultChecked={product?.best_sell}>
 								Bán chạy
 							</Field>
 							<Field
 								as={Checkbox}
 								name='highlight'
-								defaultChecked={item?.highlight}>
+								defaultChecked={product?.highlight}>
 								Nổi bật
 							</Field>
-							<Field as={Checkbox} name='new' defaultChecked={item?.new}>
+							<Field as={Checkbox} name='new' defaultChecked={product?.new}>
 								Mới nhất
 							</Field>
 						</Stack>
+						{/* notification */}
+
+						{/* promotion */}
+						<Box mt={4}>
+							<Box mb={2} className={styles.name}>
+								Thông tin khuyến mãi
+							</Box>
+
+							{promotions.map((item, index) => (
+								<Grid
+									key={index}
+									templateColumns='1fr 0.5fr'
+									gap='20px'
+									mb={4}
+									className={promotions[index] === 'del' ? styles.hidden : ''}>
+									<Textarea
+										name='content'
+										value={item}
+										minHeight='40px'
+										placeholder='Nội dung'
+										onChange={(e: any) => handleChangePromotion(e, index)}
+									/>
+									<Grid templateColumns='repeat(2, 1fr)' gap='10px' w='50%'>
+										<Tooltip hasArrow label='Thêm thông tin'>
+											<IconButton
+												colorScheme='blue'
+												aria-label='add promotion'
+												icon={
+													<i
+														className={`bx bx-add-to-queue ${styles.btn_icon}`}></i>
+												}
+												onClick={() => handleClickPromotion(index, 'add')}
+											/>
+										</Tooltip>
+
+										{promotions.length > 1 && index !== 0 && (
+											<Tooltip hasArrow label='Xóa thông tin'>
+												<IconButton
+													colorScheme='red'
+													aria-label='delete promotion'
+													icon={
+														<i
+															className={`bx bx-trash-alt ${styles.btn_icon}`}></i>
+													}
+													onClick={() => handleClickPromotion(index, 'del')}
+												/>
+											</Tooltip>
+										)}
+									</Grid>
+								</Grid>
+							))}
+						</Box>
+						{/* promotion */}
 
 						<Flex justifyContent='flex-end' alignItems='center'>
 							<Button

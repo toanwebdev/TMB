@@ -1,0 +1,23 @@
+.wrapper {
+	margin-top: 10px;
+	text-transform: none;
+
+	i {
+		font-size: 18px;
+		margin-top: 1.5px;
+	}
+}
+
+.btn {
+	margin: 0 5px;
+
+	&:hover {
+		color: #288ad6 !important;
+		border-color: #288ad6 !important;
+	}
+}
+
+.active {
+	color: #288ad6 !important;
+	border-color: #288ad6 !important;
+}

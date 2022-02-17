@@ -21,6 +21,7 @@ interface IUploadImageProps {
 	value?: string
 	resetDel?: boolean
 	handleUploadImage: any
+	className?: string
 }
 
 const UploadImage = ({
@@ -30,6 +31,7 @@ const UploadImage = ({
 	name,
 	value,
 	handleUploadImage,
+	className,
 }: IUploadImageProps) => {
 	const { isOpen, onOpen, onClose } = useDisclosure()
 	const [image, setImage] = useState('')
@@ -39,7 +41,6 @@ const UploadImage = ({
 
 	const [del, setDel] = useState(false)
 	const [handleDel, setHandleDel] = useState(false)
-	console.log(handleDel)
 
 	const handleChangeImage = (e: any) => {
 		const fileItem = e.target.files[0]
@@ -74,7 +75,7 @@ const UploadImage = ({
 
 	let body
 
-	if (!value) {
+	if (value === '' || value === 'del') {
 		body = (
 			<Flex
 				direction='column'
@@ -109,12 +110,12 @@ const UploadImage = ({
 	}
 
 	return (
-		<Box>
+		<Box className={className}>
 			<Flex
 				justifyContent='center'
 				alignItems='center'
 				className={styles.upload}
-				borderStyle={value ? 'solid' : 'dashed'}
+				borderStyle={value !== '' && value !== 'del' ? 'solid' : 'dashed'}
 				w={item ? '200px' : ''}
 				h={item ? '150px' : '300px'}>
 				<Box className={styles.upload_input}>

@@ -1,3 +1,4 @@
+import { ToastContainer } from 'react-toastify'
 import News from '../components/home/News'
 import Outstanding from '../components/home/Outstanding'
 import ProductSale from '../components/home/ProductSale'
@@ -619,45 +620,48 @@ const Index = () => {
 	]
 
 	return (
-		<Layout>
-			{/* slider */}
-			<SliderHome sliderImgs={sliderImgs} bannerImgs={bannerImgs} />
-			{/* slider */}
+		<>
+			<ToastContainer />
+			<Layout>
+				{/* slider */}
+				<SliderHome sliderImgs={sliderImgs} bannerImgs={bannerImgs} />
+				{/* slider */}
 
-			{/* product sale */}
-			<ProductSale products={productSales} />
-			{/* product sale */}
+				{/* product sale */}
+				<ProductSale products={productSales} />
+				{/* product sale */}
 
-			{/* Phone outstanding */}
-			<Outstanding
-				outstandingTitle='Điện thoại'
-				productNames={phoneOutstandingNames}
-				productTotal={phoneOutstandingTotal}
-				products={phoneOutstandingProducts}
-			/>
-			{/* Phone outstanding */}
+				{/* Phone outstanding */}
+				<Outstanding
+					outstandingTitle='Điện thoại'
+					productNames={phoneOutstandingNames}
+					productTotal={phoneOutstandingTotal}
+					products={phoneOutstandingProducts}
+				/>
+				{/* Phone outstanding */}
 
-			{/* MacBook & Laptop outstanding */}
-			<Outstanding
-				outstandingTitle='MacBook & Laptop'
-				productNames={macLapOutstandingNames}
-				productTotal={macLapOutstandingTotal}
-				products={macLapOutstandingProducts}
-			/>
+				{/* MacBook & Laptop outstanding */}
+				<Outstanding
+					outstandingTitle='MacBook & Laptop'
+					productNames={macLapOutstandingNames}
+					productTotal={macLapOutstandingTotal}
+					products={macLapOutstandingProducts}
+				/>
 
-			{/* accessories outstanding */}
-			<Outstanding
-				outstandingTitle='Phụ Kiện'
-				productNames={accessoryOutstandingNames}
-				productTotal={accessoryOutstandingTotal}
-				products={accessoryOutstandingProducts}
-			/>
-			{/* accessories outstanding */}
+				{/* accessories outstanding */}
+				<Outstanding
+					outstandingTitle='Phụ Kiện'
+					productNames={accessoryOutstandingNames}
+					productTotal={accessoryOutstandingTotal}
+					products={accessoryOutstandingProducts}
+				/>
+				{/* accessories outstanding */}
 
-			{/* news */}
-			<News news={news} />
-			{/* news */}
-		</Layout>
+				{/* news */}
+				<News news={news} />
+				{/* news */}
+			</Layout>
+		</>
 	)
 }
 

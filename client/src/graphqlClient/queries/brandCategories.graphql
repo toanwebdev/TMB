@@ -1,0 +1,6 @@
+query BrandCategories($categoryId: Float!) {
+	brandCategories(categoryId: $categoryId) {
+		brandId
+		categoryId
+	}
+}

@@ -1,0 +1,3 @@
+mutation AddSpecifications($addSpecificationsInput: AddSpecificationsInput!) {
+	addSpecifications(addSpecificationsInput: $addSpecificationsInput)
+}

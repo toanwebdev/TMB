@@ -10,21 +10,39 @@ export class UploadResolver {
 	async singleUpload(
 		@Arg('file', () => GraphQLUpload)
 		{ createReadStream, filename }: Upload,
-	): Promise<string | null> {
+	): Promise<string> {
 		const { name, ext } = path.parse(filename)
 		const uploadName = `${name}_${Date.now()}${ext}`
 
-		return new Promise((res, rej) => {
-			createReadStream()
-				.pipe(
-					createWriteStream(
-						path.join(process.cwd(), `/../client/public/images/${uploadName}`),
-					),
-				)
-				.on('finish', () => {
-					res(`${process.env.CORS_ORIGIN_DEV}/images/${uploadName}`)
-				})
-				.on('error', () => rej(null))
-		})
+		await createReadStream().pipe(
+			createWriteStream(
+				path.join(process.cwd(), `/../client/public/images/${uploadName}`),
+			),
+		)
+
+		return `${process.env.CORS_ORIGIN_DEV}/images/${uploadName}`
+	}
+
+	@Mutation((_return) => [String])
+	async multipleUpload(
+		@Arg('files', () => [GraphQLUpload])
+		files: Upload[],
+	): Promise<string[]> {
+		let urls: Array<string> = []
+		for (let i = 0; i < files.length; i++) {
+			let { createReadStream, filename } = await files[i]
+			let { name, ext } = path.parse(filename)
+			let uploadName = `${name}_${Date.now()}${ext}`
+
+			await createReadStream().pipe(
+				createWriteStream(
+					path.join(process.cwd(), `/../client/public/images/${uploadName}`),
+				),
+			)
+
+			urls = [...urls, `${process.env.CORS_ORIGIN_DEV}/images/${uploadName}`]
+		}
+
+		return urls
 	}
 }

@@ -1,0 +1,6 @@
+query ColorByIds($colorByIdsInput: ColorByIdsInput!) {
+	colorByIds(colorByIdsInput: $colorByIdsInput) {
+		id
+		name
+	}
+}

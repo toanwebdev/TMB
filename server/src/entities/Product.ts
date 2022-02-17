@@ -1,4 +1,3 @@
-import { Category } from './Category'
 import { MaxLength } from 'class-validator'
 import { Field, ID, ObjectType } from 'type-graphql'
 import {
@@ -12,9 +11,12 @@ import {
 	UpdateDateColumn,
 } from 'typeorm'
 import { Brand } from './Brand'
+import { Category } from './Category'
 import { Order_Product } from './Order_Product'
 import { Product_Color } from './Product_Color'
 import { Product_Image } from './Product_Image'
+import { Promotion } from './Promotion'
+import { Specifications } from './Specifications'
 import { User } from './User'
 
 @ObjectType()
@@ -25,18 +27,18 @@ export class Product extends BaseEntity {
 	id!: number
 
 	@Field()
-	@Column({ length: 150 })
-	@MaxLength(150)
+	@Column({ length: 200 })
+	@MaxLength(200)
 	name!: string
 
 	@Field({ nullable: true })
-	@Column({ nullable: true, length: 150 })
-	@MaxLength(150)
+	@Column({ nullable: true, length: 200 })
+	@MaxLength(200)
 	slug: string
 
 	@Field()
-	@Column({ default: 'no-image.jpg', length: 100 })
-	@MaxLength(100)
+	@Column({ default: 'no-image.jpg', length: 200 })
+	@MaxLength(200)
 	avatar!: string
 
 	@Field({ nullable: true })
@@ -73,22 +75,28 @@ export class Product extends BaseEntity {
 
 	@Field({ nullable: true })
 	@Column({ nullable: true })
-	rating: number
-
-	@Field({ nullable: true })
-	@Column({ nullable: true })
-	assessor_num: number
-
-	@Field({ nullable: true })
-	@Column({ nullable: true })
 	gift: number
+
+	@Field()
+	@Column({ default: 0 })
+	quantity!: number
 
 	@OneToMany((_to) => Order_Product, (order_product) => order_product.product)
 	order_products: Order_Product[]
 
+	@Field()
+	@Column()
+	userCreatedId!: number
+
+	@Field((_type) => User, { nullable: true })
 	@ManyToOne((_to) => User, (user_created) => user_created.product_createds)
 	user_created!: User
 
+	@Field()
+	@Column()
+	userUpdatedId!: number
+
+	@Field((_type) => User, { nullable: true })
 	@ManyToOne((_to) => User, (user_updated) => user_updated.product_updateds)
 	user_updated!: User
 
@@ -96,6 +104,7 @@ export class Product extends BaseEntity {
 	@Column()
 	brandId!: number
 
+	@Field((_type) => Brand, { nullable: true })
 	@ManyToOne((_to) => Brand, (brand) => brand.products)
 	brand!: Brand
 
@@ -103,14 +112,28 @@ export class Product extends BaseEntity {
 	@Column()
 	categoryId!: number
 
+	@Field((_type) => Category, { nullable: true })
 	@ManyToOne((_to) => Category, (category) => category.products)
-	category: Category[]
+	category!: Category
 
+	@Field((_type) => [Product_Color], { nullable: true })
 	@OneToMany((_to) => Product_Color, (product_color) => product_color.product)
 	product_colors: Product_Color[]
 
+	@Field((_type) => [Product_Image], { nullable: true })
 	@OneToMany((_to) => Product_Image, (product_image) => product_image.product)
 	product_images: Product_Image[]
+
+	@Field((_type) => [Specifications], { nullable: true })
+	@OneToMany(
+		(_to) => Specifications,
+		(specifications) => specifications.product,
+	)
+	specificationses: Specifications[]
+
+	@Field((_type) => [Promotion], { nullable: true })
+	@OneToMany((_to) => Promotion, (promotion) => promotion.product)
+	promotions: Promotion[]
 
 	@Field()
 	@CreateDateColumn()

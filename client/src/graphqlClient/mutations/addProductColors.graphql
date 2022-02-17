@@ -1,0 +1,3 @@
+mutation AddProductColors($addProductColorsInput: AddProductColorsInput!) {
+	addProductColors(addProductColorsInput: $addProductColorsInput)
+}

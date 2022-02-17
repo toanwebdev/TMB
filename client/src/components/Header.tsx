@@ -22,7 +22,7 @@ import {
 import { Form, Formik, FormikHelpers } from 'formik'
 import NextLink from 'next/link'
 import { useState } from 'react'
-import { toast, ToastContainer } from 'react-toastify'
+import { toast } from 'react-toastify'
 import {
 	EditPasswordInput,
 	MeDocument,
@@ -234,62 +234,59 @@ const Header = () => {
 	}
 
 	return (
-		<>
-			<ToastContainer />
-			<Flex
-				justifyContent='space-around'
-				alignItems='center'
-				className={styles.wrapper}>
-				{/* logo */}
-				<NextLink href='/' passHref>
-					<Link className={styles.logo}>TMB</Link>
+		<Flex
+			justifyContent='space-around'
+			alignItems='center'
+			className={styles.wrapper}>
+			{/* logo */}
+			<NextLink href='/' passHref>
+				<Link className={styles.logo}>TMB</Link>
+			</NextLink>
+			{/* logo */}
+
+			{/* search */}
+			<Box className={styles.search_wrapper}>
+				<Box className={styles.search_icon}>
+					<i className='bx bx-search-alt'></i>
+				</Box>
+				<Tooltip hasArrow bg='blue.400' label='Nhấn enter để tìm kiếm'>
+					<Input
+						className={styles.search_input}
+						placeholder='Tìm kiếm sản phẩm ...'
+						size='md'
+					/>
+				</Tooltip>
+			</Box>
+			{/* search */}
+
+			<Box>
+				{/* cart */}
+				<NextLink href='/gio-hang' passHref>
+					<Link>
+						<Button
+							className={styles.cart_btn}
+							leftIcon={<i className={`bx bx-cart ${styles.cart_icon}`}></i>}
+							variant='outline'
+							fontSize={14}>
+							Giỏ hàng
+						</Button>
+					</Link>
 				</NextLink>
-				{/* logo */}
+				{/* cart */}
 
-				{/* search */}
-				<Box className={styles.search_wrapper}>
-					<Box className={styles.search_icon}>
-						<i className='bx bx-search-alt'></i>
-					</Box>
-					<Tooltip hasArrow bg='blue.400' label='Nhấn enter để tìm kiếm'>
-						<Input
-							className={styles.search_input}
-							placeholder='Tìm kiếm sản phẩm ...'
-							size='md'
-						/>
-					</Tooltip>
-				</Box>
-				{/* search */}
+				{/* history */}
+				<NextLink href='/lich-su-don-hang' passHref>
+					<Link className={`${styles.link} ${styles.history}`}>
+						Lịch sử đơn hàng
+					</Link>
+				</NextLink>
+				{/* history */}
+			</Box>
 
-				<Box>
-					{/* cart */}
-					<NextLink href='/gio-hang' passHref>
-						<Link>
-							<Button
-								className={styles.cart_btn}
-								leftIcon={<i className={`bx bx-cart ${styles.cart_icon}`}></i>}
-								variant='outline'
-								fontSize={14}>
-								Giỏ hàng
-							</Button>
-						</Link>
-					</NextLink>
-					{/* cart */}
-
-					{/* history */}
-					<NextLink href='/lich-su-don-hang' passHref>
-						<Link className={`${styles.link} ${styles.history}`}>
-							Lịch sử đơn hàng
-						</Link>
-					</NextLink>
-					{/* history */}
-				</Box>
-
-				{/* auth */}
-				{body}
-				{/* auth */}
-			</Flex>
-		</>
+			{/* auth */}
+			{body}
+			{/* auth */}
+		</Flex>
 	)
 }
 

@@ -1,0 +1,16 @@
+fragment productInfo on Product {
+	id
+	name
+	slug
+	avatar
+	description
+	installment
+	best_sell
+	highlight
+	new
+	price_input
+	discount
+	price
+	gift
+	quantity
+}

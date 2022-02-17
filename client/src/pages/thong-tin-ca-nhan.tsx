@@ -17,11 +17,11 @@ import {
 	RadioGroup,
 	Spinner,
 	Stack,
-	useDisclosure
+	useDisclosure,
 } from '@chakra-ui/react'
 import { Field, Form, Formik, FormikHelpers } from 'formik'
 import { useState } from 'react'
-import { toast } from 'react-toastify'
+import { toast, ToastContainer } from 'react-toastify'
 import CartFormMenuItem from '../components/cart/CartFormMenuItem'
 import InputField from '../components/InputField'
 import Layout from '../components/Layout'
@@ -33,7 +33,7 @@ import {
 	useDistrictAllQuery,
 	useProvinceAllQuery,
 	useSingleUploadMutation,
-	useVillageAllQuery
+	useVillageAllQuery,
 } from '../generated/graphql'
 import { mapFieldErrors } from '../helpers/mapFieldErrors'
 import { initializeApollo } from '../lib/apolloClient'
@@ -186,309 +186,317 @@ const UserProfile = () => {
 	}
 
 	return (
-		<Layout>
-			<Flex
-				justifyContent='center'
-				alignItems='center'
-				className={styles.wrapper}>
-				<Box className={styles.info}>
-					<Box className={styles.info_title}>Thông tin cá nhân</Box>
-					{/* avatar */}
-					<Grid templateColumns='repeat(2, 1fr)' mt='15px'>
-						<span className={styles.info_name}>Ảnh đại diện:</span>
-						<Avatar
-							name={authData?.me?.first_name}
-							src={authData?.me?.avatar as string | undefined}
-							size='lg'
-						/>
-					</Grid>
+		<>
+			<ToastContainer />
+			<Layout>
+				<Flex
+					justifyContent='center'
+					alignItems='center'
+					className={styles.wrapper}>
+					<Box className={styles.info}>
+						<Box className={styles.info_title}>Thông tin cá nhân</Box>
+						{/* avatar */}
+						<Grid templateColumns='repeat(2, 1fr)' mt='15px'>
+							<span className={styles.info_name}>Ảnh đại diện:</span>
+							<Avatar
+								name={authData?.me?.first_name}
+								src={authData?.me?.avatar as string | undefined}
+								size='lg'
+							/>
+						</Grid>
 
-					{/* avatar */}
+						{/* avatar */}
 
-					{/* fullName */}
-					<Grid templateColumns='repeat(2, 1fr)' mt='15px'>
-						<span className={styles.info_name}>Họ và tên:</span>
-						<span>
-							{authData?.me?.last_name} {authData?.me?.first_name}
-						</span>
-					</Grid>
-					{/* fullName */}
+						{/* fullName */}
+						<Grid templateColumns='repeat(2, 1fr)' mt='15px'>
+							<span className={styles.info_name}>Họ và tên:</span>
+							<span>
+								{authData?.me?.last_name} {authData?.me?.first_name}
+							</span>
+						</Grid>
+						{/* fullName */}
 
-					{/* gender */}
-					<Grid templateColumns='repeat(2, 1fr)' mt='5px'>
-						<span className={styles.info_name}>Giới tính:</span>
-						<span>{authData?.me?.gender}</span>
-					</Grid>
-					{/* gender */}
+						{/* gender */}
+						<Grid templateColumns='repeat(2, 1fr)' mt='5px'>
+							<span className={styles.info_name}>Giới tính:</span>
+							<span>{authData?.me?.gender}</span>
+						</Grid>
+						{/* gender */}
 
-					{/* username */}
-					<Grid templateColumns='repeat(2, 1fr)' mt='5px'>
-						<span className={styles.info_name}>Tên đăng nhập:</span>
-						<span className={styles.info_username}>
-							{authData?.me?.username}
-						</span>
-					</Grid>
-					{/* username */}
+						{/* username */}
+						<Grid templateColumns='repeat(2, 1fr)' mt='5px'>
+							<span className={styles.info_name}>Tên đăng nhập:</span>
+							<span className={styles.info_username}>
+								{authData?.me?.username}
+							</span>
+						</Grid>
+						{/* username */}
 
-					{/* email */}
-					<Grid templateColumns='repeat(2, 1fr)' mt='5px'>
-						<span className={styles.info_name}>email:</span>
-						<span>{authData?.me?.email}</span>
-					</Grid>
-					{/* email */}
+						{/* email */}
+						<Grid templateColumns='repeat(2, 1fr)' mt='5px'>
+							<span className={styles.info_name}>email:</span>
+							<span>{authData?.me?.email}</span>
+						</Grid>
+						{/* email */}
 
-					{/* phone */}
-					<Grid templateColumns='repeat(2, 1fr)' mt='5px'>
-						<span className={styles.info_name}>Số điện thoại:</span>
-						<span>
-							{authData?.me?.phone_num ? (
-								authData?.me?.phone_num
-							) : (
-								<span className={styles.info_value_empty}>
-									Chưa có số điện thoại
-								</span>
-							)}
-						</span>
-					</Grid>
-					{/* phone */}
+						{/* phone */}
+						<Grid templateColumns='repeat(2, 1fr)' mt='5px'>
+							<span className={styles.info_name}>Số điện thoại:</span>
+							<span>
+								{authData?.me?.phone_num ? (
+									authData?.me?.phone_num
+								) : (
+									<span className={styles.info_value_empty}>
+										Chưa có số điện thoại
+									</span>
+								)}
+							</span>
+						</Grid>
+						{/* phone */}
 
-					{/* address */}
-					<Grid templateColumns='repeat(2, 1fr)' mt='5px'>
-						<span className={styles.info_name}>Địa chỉ giao hàng:</span>
-						<span>
-							{authData?.me?.province ? (
-								`${authData.me.street}, ${authData.me.village?.name}, ${authData.me.district?.name}, ${authData.me.province?.name}`
-							) : (
-								<span className={styles.info_value_empty}>
-									Chưa có địa chỉ giao hàng
-								</span>
-							)}
-						</span>
-					</Grid>
-					{/* address */}
+						{/* address */}
+						<Grid templateColumns='repeat(2, 1fr)' mt='5px'>
+							<span className={styles.info_name}>Địa chỉ giao hàng:</span>
+							<span>
+								{authData?.me?.province ? (
+									`${authData.me.street}, ${authData.me.village?.name}, ${authData.me.district?.name}, ${authData.me.province?.name}`
+								) : (
+									<span className={styles.info_value_empty}>
+										Chưa có địa chỉ giao hàng
+									</span>
+								)}
+							</span>
+						</Grid>
+						{/* address */}
 
-					<Flex justifyContent='flex-end' alignItems='center'>
-						<Button className={styles.info_btn} onClick={onOpenModal}>
-							<i className={`bx bxs-edit-alt ${styles.info_btn_icon}`}></i>
-							<span>Chỉnh sửa thông tin</span>
-						</Button>
-					</Flex>
+						<Flex justifyContent='flex-end' alignItems='center'>
+							<Button className={styles.info_btn} onClick={onOpenModal}>
+								<i className={`bx bxs-edit-alt ${styles.info_btn_icon}`}></i>
+								<span>Chỉnh sửa thông tin</span>
+							</Button>
+						</Flex>
 
-					{/* edit user profile */}
-					<Modal isOpen={isOpenModal} onClose={onCloseModal}>
-						<ModalOverlay />
-						<ModalContent className={styles.info_modal}>
-							<ModalHeader>Chỉnh sửa thông tin cá nhân</ModalHeader>
-							<ModalCloseButton />
-							<Formik
-								initialValues={initialValues}
-								onSubmit={onEditUserProfileSubmit}>
-								{({ isSubmitting }) => (
-									<Form>
-										<ModalBody>
-											{/* avatar */}
-											<Box>
-												<Box className={styles.info_modal_name}>
-													Ảnh đại diện:
-												</Box>
-												<Grid templateColumns='1fr 1.5fr'>
-													<Avatar
-														name={authData?.me?.first_name}
-														size='xl'
-														src={
-															avatar ? avatar : (authData?.me?.avatar as string)
-														}>
-														<AvatarBadge
-															as={IconButton}
-															size='sm'
-															rounded='full'
-															top='-10px'
-															colorScheme='red'
-															aria-label='remove Image'
-															icon={<i className='bx bx-x'></i>}
-															onClick={() => setAvatar('null')}
-														/>
-													</Avatar>
-													<Box>
-														<Button className={styles.info_modal_upload_custom}>
-															<span
-																className={
-																	styles.info_modal_upload_custom_input
-																}>
-																<InputField
-																	name='avatar'
-																	type='file'
-																	onChange={handleChangeAvatar}
-																/>
-															</span>
-															<i
-																className={`bx bx-image-add ${styles.info_modal_upload_custom_icon}`}></i>
-															<span>Tải ảnh lên</span>
-														</Button>
-
-														{avatar && avatar !== authData?.me?.avatar && (
-															<Button
-																className={styles.info_modal_upload_restore}
-																onClick={() =>
-																	setAvatar(authData?.me?.avatar as string)
-																}>
-																<i
-																	className={`bx bx-images ${styles.info_modal_upload_custom_icon}`}></i>
-																<span>Khôi phục ảnh</span>
-															</Button>
-														)}
+						{/* edit user profile */}
+						<Modal isOpen={isOpenModal} onClose={onCloseModal}>
+							<ModalOverlay />
+							<ModalContent className={styles.info_modal}>
+								<ModalHeader>Chỉnh sửa thông tin cá nhân</ModalHeader>
+								<ModalCloseButton />
+								<Formik
+									initialValues={initialValues}
+									onSubmit={onEditUserProfileSubmit}>
+									{({ isSubmitting }) => (
+										<Form>
+											<ModalBody>
+												{/* avatar */}
+												<Box>
+													<Box className={styles.info_modal_name}>
+														Ảnh đại diện:
 													</Box>
-												</Grid>
-											</Box>
-											{/* avatar */}
+													<Grid templateColumns='1fr 1.5fr'>
+														<Avatar
+															name={authData?.me?.first_name}
+															size='xl'
+															src={
+																avatar
+																	? avatar
+																	: (authData?.me?.avatar as string)
+															}>
+															<AvatarBadge
+																as={IconButton}
+																size='sm'
+																rounded='full'
+																top='-10px'
+																colorScheme='red'
+																aria-label='remove Image'
+																icon={<i className='bx bx-x'></i>}
+																onClick={() => setAvatar('null')}
+															/>
+														</Avatar>
+														<Box>
+															<Button
+																className={styles.info_modal_upload_custom}>
+																<span
+																	className={
+																		styles.info_modal_upload_custom_input
+																	}>
+																	<InputField
+																		name='avatar'
+																		type='file'
+																		onChange={handleChangeAvatar}
+																	/>
+																</span>
+																<i
+																	className={`bx bx-image-add ${styles.info_modal_upload_custom_icon}`}></i>
+																<span>Tải ảnh lên</span>
+															</Button>
 
-											{/* fullName */}
-											<Grid
-												templateColumns='repeat(2, 1fr)'
-												gap='10px'
-												className={styles.form_input}>
-												<Box mt={4}>
-													<InputField
-														name='last_name'
-														placeholder='Họ'
-														label='Họ'
-														type='text'
-														isRequired
-													/>
+															{avatar && avatar !== authData?.me?.avatar && (
+																<Button
+																	className={styles.info_modal_upload_restore}
+																	onClick={() =>
+																		setAvatar(authData?.me?.avatar as string)
+																	}>
+																	<i
+																		className={`bx bx-images ${styles.info_modal_upload_custom_icon}`}></i>
+																	<span>Khôi phục ảnh</span>
+																</Button>
+															)}
+														</Box>
+													</Grid>
 												</Box>
+												{/* avatar */}
 
-												<Box mt={4}>
-													<InputField
-														name='first_name'
-														placeholder='Tên'
-														label='Tên'
-														type='text'
-														isRequired
-													/>
-												</Box>
-											</Grid>
-											{/* fullName */}
-
-											{/* gender */}
-											<Box mt={4}>
-												<Box className={styles.info_modal_gender_name}>
-													Giới tính{' '}
-													<span
-														className={styles.info_modal_gender_name_required}>
-														*
-													</span>
-												</Box>
-												<RadioGroup defaultValue={authData?.me?.gender}>
-													<Stack direction='row'>
-														<Field name='gender' value='Nam' as={Radio}>
-															Nam
-														</Field>
-														<Field name='gender' value='Nữ' as={Radio}>
-															Nữ
-														</Field>
-													</Stack>
-												</RadioGroup>
-											</Box>
-											{/* gender */}
-
-											{/* email */}
-											<Box mt={4}>
-												<InputField
-													name='email'
-													placeholder='Email'
-													label='Email'
-													type='email'
-													isRequired
-												/>
-											</Box>
-											{/* email */}
-
-											{/* phone */}
-											<Box mt={4}>
-												<InputField
-													name='phone_num'
-													placeholder='Số điện thoại'
-													label='Số điện thoại'
-													type='text'
-												/>
-											</Box>
-											{/* phone */}
-
-											{/* address */}
-											<Box mt={4}>
-												<Box className={styles.info_modal_address_name}>
-													Địa chỉ nhận hàng
-												</Box>
+												{/* fullName */}
 												<Grid
 													templateColumns='repeat(2, 1fr)'
-													templateRows='repeat(2, 1fr)'
-													gap='10px'>
-													<CartFormMenuItem
-														menus={provinceAllData?.provinceAll}
-														initAddress={
-															authData?.me?.province
-																? authData.me.province
-																: {
-																		id: '-1',
-																		name: 'Chọn tỉnh, thành phố',
-																  }
-														}
-														placeholder='Nhập tỉnh, thành để tìm kiếm nhanh'
-														changeAddress={(id: any) => setProvinceId(id)}
-													/>
-													<CartFormMenuItem
-														menus={districtAllData?.districtAll}
-														initAddress={
-															authData?.me?.district &&
-															authData?.me?.province?.id === provinceId
-																? authData.me.district
-																: { id: '-1', name: 'Chọn quận, huyện' }
-														}
-														placeholder='Nhập quận, huyện để tìm kiếm nhanh'
-														changeAddress={(id: any) => setDistrictId(id)}
-													/>
-													<CartFormMenuItem
-														menus={villageAllData?.villageAll}
-														initAddress={
-															authData?.me?.village &&
-															authData?.me?.province?.id === provinceId &&
-															authData?.me?.district?.id === districtId
-																? authData.me.village
-																: { id: '-1', name: 'Chọn phường, xã' }
-														}
-														placeholder='Nhập phường, xã để tìm kiếm nhanh'
-														changeAddress={(id: any) => setVillageId(id)}
-													/>
+													gap='10px'
+													className={styles.form_input}>
+													<Box mt={4}>
+														<InputField
+															name='last_name'
+															placeholder='Họ'
+															label='Họ'
+															type='text'
+															isRequired
+														/>
+													</Box>
+
+													<Box mt={4}>
+														<InputField
+															name='first_name'
+															placeholder='Tên'
+															label='Tên'
+															type='text'
+															isRequired
+														/>
+													</Box>
+												</Grid>
+												{/* fullName */}
+
+												{/* gender */}
+												<Box mt={4}>
+													<Box className={styles.info_modal_gender_name}>
+														Giới tính{' '}
+														<span
+															className={
+																styles.info_modal_gender_name_required
+															}>
+															*
+														</span>
+													</Box>
+													<RadioGroup defaultValue={authData?.me?.gender}>
+														<Stack direction='row'>
+															<Field name='gender' value='Nam' as={Radio}>
+																Nam
+															</Field>
+															<Field name='gender' value='Nữ' as={Radio}>
+																Nữ
+															</Field>
+														</Stack>
+													</RadioGroup>
+												</Box>
+												{/* gender */}
+
+												{/* email */}
+												<Box mt={4}>
 													<InputField
-														name='street'
-														placeholder='Số nhà, tên đường'
+														name='email'
+														placeholder='Email'
+														label='Email'
+														type='email'
+														isRequired
+													/>
+												</Box>
+												{/* email */}
+
+												{/* phone */}
+												<Box mt={4}>
+													<InputField
+														name='phone_num'
+														placeholder='Số điện thoại'
+														label='Số điện thoại'
 														type='text'
 													/>
-												</Grid>
-											</Box>
-											{/* address */}
-										</ModalBody>
-										<ModalFooter>
-											<Button
-												colorScheme='blue'
-												mr={3}
-												type='submit'
-												isLoading={isSubmitting}>
-												Lưu lại
-											</Button>
-											<Button colorScheme='red' onClick={onCloseModal}>
-												Hủy
-											</Button>
-										</ModalFooter>
-									</Form>
-								)}
-							</Formik>
-						</ModalContent>
-					</Modal>
-					{/* edit user profile */}
-				</Box>
-			</Flex>
-		</Layout>
+												</Box>
+												{/* phone */}
+
+												{/* address */}
+												<Box mt={4}>
+													<Box className={styles.info_modal_address_name}>
+														Địa chỉ nhận hàng
+													</Box>
+													<Grid
+														templateColumns='repeat(2, 1fr)'
+														templateRows='repeat(2, 1fr)'
+														gap='10px'>
+														<CartFormMenuItem
+															menus={provinceAllData?.provinceAll}
+															initAddress={
+																authData?.me?.province
+																	? authData.me.province
+																	: {
+																			id: '-1',
+																			name: 'Chọn tỉnh, thành phố',
+																	  }
+															}
+															placeholder='Nhập tỉnh, thành để tìm kiếm nhanh'
+															changeAddress={(id: any) => setProvinceId(id)}
+														/>
+														<CartFormMenuItem
+															menus={districtAllData?.districtAll}
+															initAddress={
+																authData?.me?.district &&
+																authData?.me?.province?.id === provinceId
+																	? authData.me.district
+																	: { id: '-1', name: 'Chọn quận, huyện' }
+															}
+															placeholder='Nhập quận, huyện để tìm kiếm nhanh'
+															changeAddress={(id: any) => setDistrictId(id)}
+														/>
+														<CartFormMenuItem
+															menus={villageAllData?.villageAll}
+															initAddress={
+																authData?.me?.village &&
+																authData?.me?.province?.id === provinceId &&
+																authData?.me?.district?.id === districtId
+																	? authData.me.village
+																	: { id: '-1', name: 'Chọn phường, xã' }
+															}
+															placeholder='Nhập phường, xã để tìm kiếm nhanh'
+															changeAddress={(id: any) => setVillageId(id)}
+														/>
+														<InputField
+															name='street'
+															placeholder='Số nhà, tên đường'
+															type='text'
+														/>
+													</Grid>
+												</Box>
+												{/* address */}
+											</ModalBody>
+											<ModalFooter>
+												<Button
+													colorScheme='blue'
+													mr={3}
+													type='submit'
+													isLoading={isSubmitting}>
+													Lưu lại
+												</Button>
+												<Button colorScheme='red' onClick={onCloseModal}>
+													Hủy
+												</Button>
+											</ModalFooter>
+										</Form>
+									)}
+								</Formik>
+							</ModalContent>
+						</Modal>
+						{/* edit user profile */}
+					</Box>
+				</Flex>
+			</Layout>
+		</>
 	)
 }
 

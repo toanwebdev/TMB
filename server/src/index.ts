@@ -12,6 +12,7 @@ import { buildSchema } from 'type-graphql'
 import { createConnection } from 'typeorm'
 import { COOKIE_NAME, __prod__ } from './constants'
 import { Brand } from './entities/Brand'
+import { Brand_Category } from './entities/Brand_Category'
 import { Category } from './entities/Category'
 import { Color } from './entities/Color'
 import { District } from './entities/District'
@@ -20,18 +21,26 @@ import { Order_Product } from './entities/Order_Product'
 import { Product } from './entities/Product'
 import { Product_Color } from './entities/Product_Color'
 import { Product_Image } from './entities/Product_Image'
+import { Promotion } from './entities/Promotion'
 import { Province } from './entities/Province'
 import { Role } from './entities/Role'
 import { Slider } from './entities/Slider'
 import { Slider_Image } from './entities/Slider_Image'
+import { Specifications } from './entities/Specifications'
 import { User } from './entities/User'
 import { User_Role } from './entities/User_Role'
 import { Village } from './entities/Village'
 import { BrandResolver } from './resolvers/brand'
+import { BrandCategoryResolver } from './resolvers/brand_category'
 import { CategoryResolver } from './resolvers/category'
 import { ColorResolver } from './resolvers/color'
 import { DistrictResolver } from './resolvers/district'
+import { ProductResolver } from './resolvers/product'
+import { ProductColorResolver } from './resolvers/product_color'
+import { ProductImageResolver } from './resolvers/product_Image'
+import { PromotionResolver } from './resolvers/promotion'
 import { ProvinceResolver } from './resolvers/province'
+import { SpecificationsResolver } from './resolvers/specifications'
 import { UploadResolver } from './resolvers/upload'
 import { UserResolver } from './resolvers/user'
 import { VillageResolver } from './resolvers/village'
@@ -78,6 +87,9 @@ async function main() {
 			Slider,
 			Slider_Image,
 			User_Role,
+			Specifications,
+			Promotion,
+			Brand_Category,
 		],
 		migrations: [path.join(__dirname, '/migrations/*')],
 	})
@@ -130,6 +142,12 @@ async function main() {
 				CategoryResolver,
 				BrandResolver,
 				ColorResolver,
+				ProductResolver,
+				ProductImageResolver,
+				ProductColorResolver,
+				SpecificationsResolver,
+				PromotionResolver,
+				BrandCategoryResolver,
 			],
 			validate: false,
 		}),
@@ -146,7 +164,7 @@ async function main() {
 
 	app.use(
 		'/graphql',
-		graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
+		graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 50 }),
 	)
 
 	apolloServer.applyMiddleware({ app, cors: false })

@@ -9,7 +9,7 @@ import {
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm'
-import { Brand } from './Brand'
+import { Brand_Category } from './Brand_Category'
 import { Product } from './Product'
 
 @ObjectType()
@@ -24,11 +24,19 @@ export class Category extends BaseEntity {
 	@MaxLength(60)
 	name!: string
 
+	@Field()
+	@Column({ length: 60 })
+	@MaxLength(60)
+	slug!: string
+
 	@OneToMany((_to) => Product, (product) => product.category)
 	products!: Product[]
 
-	@OneToMany((_to) => Brand, (brand) => brand.category)
-	brands!: Brand[]
+	@OneToMany(
+		(_to) => Brand_Category,
+		(brand_category) => brand_category.category,
+	)
+	brand_categories!: Brand_Category[]
 
 	@Field()
 	@CreateDateColumn()

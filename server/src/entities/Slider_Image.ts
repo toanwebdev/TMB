@@ -19,8 +19,8 @@ export class Slider_Image extends BaseEntity {
 	id!: number
 
 	@Field()
-	@Column({ default: 'no-image.jpg', length: 100 })
-	@MaxLength(100)
+	@Column({ default: 'no-image.jpg', length: 200 })
+	@MaxLength(200)
 	link!: string
 
 	@ManyToOne((_to) => Slider, (slider) => slider.slider_images)

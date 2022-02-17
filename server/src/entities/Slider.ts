@@ -24,8 +24,8 @@ export class Slider extends BaseEntity {
 	name: string
 
 	@Field({ nullable: true })
-	@Column({ nullable: true, length: 100 })
-	@MaxLength(100)
+	@Column({ nullable: true, length: 200 })
+	@MaxLength(200)
 	link: string
 
 	@OneToMany((_to) => Slider_Image, (slider_image) => slider_image.slider)

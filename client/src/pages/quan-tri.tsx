@@ -1,4 +1,5 @@
 import { Flex, Spinner } from '@chakra-ui/react'
+import { ToastContainer } from 'react-toastify'
 import AdminLayout from '../components/Admin/AdminLayout'
 import DashboardMain from '../components/Admin/DashboardMain'
 import DashboardRight from '../components/Admin/DashboardRight'
@@ -16,10 +17,13 @@ const Admin = () => {
 	}
 
 	return (
-		<AdminLayout>
-			<DashboardMain />
-			<DashboardRight />
-		</AdminLayout>
+		<>
+			<ToastContainer />
+			<AdminLayout>
+				<DashboardMain />
+				<DashboardRight />
+			</AdminLayout>
+		</>
 	)
 }
 

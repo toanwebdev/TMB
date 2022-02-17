@@ -1,0 +1,5 @@
+mutation AddProduct($addProductInput: AddProductInput!) {
+	addProduct(addProductInput: $addProductInput) {
+		...productMutationResponse
+	}
+}

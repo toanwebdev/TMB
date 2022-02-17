@@ -5,12 +5,11 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
-	ManyToOne,
 	OneToMany,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm'
-import { Category } from './Category'
+import { Brand_Category } from './Brand_Category'
 import { Product } from './Product'
 
 @ObjectType()
@@ -21,24 +20,20 @@ export class Brand extends BaseEntity {
 	id!: number
 
 	@Field()
-	@Column()
-	@MaxLength(45)
+	@Column({ length: 60 })
+	@MaxLength(60)
 	name!: string
 
 	@Field()
-	@Column({ default: 'no-image.jpg' })
-	@MaxLength(100)
+	@Column({ default: 'no-image.jpg', length: 200 })
+	@MaxLength(200)
 	logo!: string
 
 	@OneToMany((_to) => Product, (product) => product.brand)
 	products!: Product[]
 
-	@Field()
-	@Column()
-	categoryId!: number
-
-	@ManyToOne((_to) => Category, (category) => category.brands)
-	category!: Category
+	@OneToMany((_to) => Brand_Category, (brand_category) => brand_category.brand)
+	brand_categories!: Brand_Category[]
 
 	@Field()
 	@CreateDateColumn()

@@ -1,0 +1,11 @@
+fragment productMutationResponse on ProductMutationResponse {
+	code
+	success
+	message
+	product {
+		...productInfo
+	}
+	errors {
+		...fieldError
+	}
+}

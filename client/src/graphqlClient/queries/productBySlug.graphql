@@ -1,0 +1,54 @@
+query ProductBySlug($productSlug: String!) {
+	productBySlug(productSlug: $productSlug) {
+		id
+		name
+		slug
+		avatar
+		description
+		installment
+		best_sell
+		highlight
+		new
+		price_input
+		discount
+		price
+		quantity
+		gift
+		category {
+			id
+			name
+		}
+		brand {
+			id
+			name
+			logo
+		}
+		product_colors {
+			colorId
+		}
+		product_images {
+			id
+			link
+			colorId
+		}
+		specificationses {
+			id
+			name
+			content
+		}
+		promotions {
+			id
+			content
+		}
+		user_created {
+			id
+			last_name
+			first_name
+		}
+		user_updated {
+			id
+			last_name
+			first_name
+		}
+	}
+}

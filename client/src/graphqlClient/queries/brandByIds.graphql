@@ -1,0 +1,7 @@
+query BrandByIds($brandByIdsInput: BrandByIdsInput!) {
+	brandByIds(brandByIdsInput: $brandByIdsInput) {
+		id
+		name
+		logo
+	}
+}

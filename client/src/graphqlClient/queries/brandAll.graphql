@@ -1,7 +1,0 @@
-query BrandAll($categoryId: Float!) {
-	brandAll(categoryId: $categoryId) {
-		id
-		name
-		logo
-	}
-}

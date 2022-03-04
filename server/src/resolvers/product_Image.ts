@@ -1,6 +1,6 @@
-import { AddProductImagesInput } from './../types/AddProductImagesInput'
 import { Arg, Mutation, Resolver } from 'type-graphql'
 import { Product_Image } from './../entities/Product_Image'
+import { AddProductImagesInput } from './../types/AddProductImagesInput'
 
 @Resolver()
 export class ProductImageResolver {

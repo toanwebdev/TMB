@@ -19,6 +19,8 @@ import { IGetProduct } from '../../../interface/product'
 import styles from '../../../styles/Admin/product/ListProduct.module.scss'
 import numberWithCommas from '../../../utils/numberWithCommas'
 import Pagination from '../../Pagination'
+import ModalDel from '../ModalDel'
+import ModalDetails from '../ModalDetails'
 
 interface IListProductProps {
 	listProduct: IGetProduct[]
@@ -85,14 +87,7 @@ const ListProduct = ({
 								</Td>
 								<Td>
 									<Flex>
-										<Tooltip hasArrow label='Xem chi tiết'>
-											<IconButton
-												size='sm'
-												colorScheme='blue'
-												aria-label='Xem chi tiết sản phẩm'
-												icon={<i className='bx bx-detail'></i>}
-											/>
-										</Tooltip>
+										<ModalDetails product={item} />
 
 										<NextLink
 											href={`/quan-tri/san-pham/chinh-sua/${item.slug}`}
@@ -110,14 +105,7 @@ const ListProduct = ({
 											</Link>
 										</NextLink>
 
-										<Tooltip hasArrow label='Xóa'>
-											<IconButton
-												size='sm'
-												colorScheme='red'
-												aria-label='Xóa sản phẩm'
-												icon={<i className='bx bx-trash-alt'></i>}
-											/>
-										</Tooltip>
+										<ModalDel name={item.name} />
 									</Flex>
 								</Td>
 							</Tr>

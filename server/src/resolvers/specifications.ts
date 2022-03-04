@@ -1,6 +1,6 @@
-import { AddSpecificationsInput } from './../types/AddSpecificationsInput'
-import { Specifications } from './../entities/Specifications'
 import { Arg, Mutation, Resolver } from 'type-graphql'
+import { Specifications } from './../entities/Specifications'
+import { AddSpecificationsInput } from './../types/AddSpecificationsInput'
 
 @Resolver()
 export class SpecificationsResolver {

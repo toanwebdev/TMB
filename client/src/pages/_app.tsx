@@ -7,17 +7,13 @@ import 'slick-carousel/slick/slick-theme.css'
 import '../styles/Globals.scss'
 import 'boxicons/css/boxicons.min.css'
 import 'react-toastify/dist/ReactToastify.css'
-import { Provider } from 'react-redux'
-import store from '../app/store'
 
 function MyApp({ Component, pageProps }: AppProps) {
 	const apolloClient = useApollo(pageProps)
 	return (
 		<ApolloProvider client={apolloClient}>
 			<ChakraProvider resetCSS>
-				<Provider store={store}>
-					<Component {...pageProps} />
-				</Provider>
+				<Component {...pageProps} />
 			</ChakraProvider>
 		</ApolloProvider>
 	)

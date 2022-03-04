@@ -31,20 +31,25 @@ const Product = () => {
 		}
 	}, [totalRowsLoading])
 
-	const { data: productPaginationData } = useProductPaginationQuery({
-		variables: {
-			productPaginationInput: {
-				skip: (pagination.page - 1) * pagination.limit,
-				take: pagination.limit,
+	const { data: productPaginationData, loading: productPaginationLoading } =
+		useProductPaginationQuery({
+			variables: {
+				productPaginationInput: {
+					skip: (pagination.page - 1) * pagination.limit,
+					take: pagination.limit,
+				},
 			},
-		},
-	})
+		})
 
 	const handlePageChange = (newPage: number) => {
 		setPagination({ ...pagination, page: newPage })
 	}
 
-	if (authLoading || (!authLoading && !authData?.me)) {
+	if (
+		authLoading ||
+		(!authLoading && !authData?.me) ||
+		productPaginationLoading
+	) {
 		return (
 			<Flex justifyContent='center' alignItems='center' minHeight='100vh'>
 				<Spinner />

@@ -1,5 +1,5 @@
-import { Product_Color } from './../entities/Product_Color'
 import { Arg, Mutation, Resolver } from 'type-graphql'
+import { Product_Color } from './../entities/Product_Color'
 import { AddProductColorsInput } from './../types/AddProductColorsInput'
 
 @Resolver()

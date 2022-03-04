@@ -58,7 +58,6 @@ interface IAddOrEditProductProps {
 const AddOrEditProduct = ({ product }: IAddOrEditProductProps) => {
 	const router = useRouter()
 	const { data: authData, loading: authLoading } = useCheckAuth()
-	console.log(product)
 
 	const initName = product ? product.name : ''
 	const [nameProduct, setNameProduct] = useState(initName)
@@ -78,36 +77,92 @@ const AddOrEditProduct = ({ product }: IAddOrEditProductProps) => {
 		}
 	}
 
-	let colorByIds: Array<{ id: string; name: string }> = []
-	if (product) {
-		const {data: colorByIdsData} = useColorByIdsQuery({
+	let initColors: Array<{ id: string; name: string }> = []
+	const [colors, setColors] = useState(initColors)
+	const { data: colorByIdsData, loading: colorByIdsLoading } =
+		useColorByIdsQuery({
 			variables: {
-				colorByIdsInput: { colorIds },
+				colorByIdsInput: { colorIds: colorIds.length === 0 ? [-1] : colorIds },
 			},
 		})
 
-		if(colorByIdsData && colorByIdsData.colorByIds) {
-			colorByIds = colorByIdsData.colorByIds
+	useEffect(() => {
+		if (colorByIdsData && colorByIdsData.colorByIds) {
+			setColors(colorByIdsData.colorByIds)
 		}
-	}
+	}, [colorByIdsLoading])
 
-	const initColors: Array<{ id: string; name: string }> = colorByIds
-	const [colors, setColors] = useState(initColors)
-
-	const initFiles: Array<{
+	let initFiles: Array<{
 		id: string
 		fileItems: Array<any>
 		images: Array<string>
-	}> = [{ id: '-1', fileItems: [''], images: [''] }]
+	}> = [{ id: '-1', fileItems: [''], images: [product ? product.avatar : ''] }]
 	const [files, setFiles] = useState(initFiles)
 
-	const initSpecis: Array<{ name: string; content: string }> = [
+	useEffect(() => {
+		if (product && product.product_images) {
+			let index = 0
+			for (let i = 0; i < product.product_images.length; i++) {
+				if (
+					initFiles[index].id === product.product_images[i].colorId.toString()
+				) {
+					initFiles.splice(index, 1, {
+						id: initFiles[index].id,
+						fileItems: [...initFiles[index].fileItems, ''],
+						images: [
+							...initFiles[index].images,
+							product.product_images[i].link,
+						],
+					})
+				} else {
+					index++
+					initFiles.push({
+						id: product.product_images[i].colorId.toString(),
+						fileItems: [''],
+						images: [product.product_images[i].link],
+					})
+				}
+			}
+
+			setFiles(initFiles)
+		}
+	}, [])
+
+	let initSpecis: Array<{ name: string; content: string }> = [
 		{ name: '', content: '' },
 	]
 	const [specis, setSpecis] = useState(initSpecis)
 
-	const initPromotions: Array<string> = ['']
+	useEffect(() => {
+		if (product && product.specificationses) {
+			initSpecis = []
+			for (let i = 0; i < product.specificationses.length; i++) {
+				initSpecis = [
+					...initSpecis,
+					{
+						name: product.specificationses[i].name,
+						content: product.specificationses[i].content,
+					},
+				]
+			}
+
+			setSpecis(initSpecis)
+		}
+	}, [])
+
+	let initPromotions: Array<string> = ['']
 	const [promotions, setPromotions] = useState(initPromotions)
+
+	useEffect(() => {
+		if (product && product.promotions) {
+			initPromotions = []
+			for (let i = 0; i < product.promotions.length; i++) {
+				initPromotions = [...initPromotions, product.promotions[i].content]
+			}
+
+			setPromotions(initPromotions)
+		}
+	}, [])
 
 	const initialValues = {
 		name: product ? product.name : '',
@@ -485,7 +540,6 @@ const AddOrEditProduct = ({ product }: IAddOrEditProductProps) => {
 			<Box className={styles.title}>
 				{product ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm'}
 			</Box>
-
 			<Formik initialValues={initialValues} onSubmit={onAddOrEditProductSubmit}>
 				{({ isSubmitting }) => (
 					<Form>
@@ -663,7 +717,7 @@ const AddOrEditProduct = ({ product }: IAddOrEditProductProps) => {
 													: ''
 												: ''
 										}
-										value={product ? product.avatar : img}
+										value={img}
 										handleUploadImage={handleUploadImage}
 										className={
 											findImagesById('-1')[index] === 'del' ? styles.hidden : ''
@@ -918,7 +972,7 @@ const AddOrEditProduct = ({ product }: IAddOrEditProductProps) => {
 								mr={3}
 								type='submit'
 								isLoading={isSubmitting}>
-								Thêm
+								{product ? 'Chỉnh sửa' : 'Thêm'}
 							</Button>
 
 							<NextLink href='/quan-tri/san-pham' passHref>

@@ -1,6 +1,6 @@
-import { AddPromotionInput } from './../types/AddPromotionInput'
-import { Promotion } from './../entities/Promotion'
 import { Arg, Mutation, Resolver } from 'type-graphql'
+import { Promotion } from './../entities/Promotion'
+import { AddPromotionInput } from './../types/AddPromotionInput'
 
 @Resolver()
 export class PromotionResolver {

@@ -1,0 +1,5 @@
+query UserPagination($userPaginationInput: PaginationInput!) {
+	userPagination(userPaginationInput: $userPaginationInput) {
+		...userInfo
+	}
+}

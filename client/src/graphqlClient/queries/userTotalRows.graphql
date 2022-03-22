@@ -1,0 +1,3 @@
+query UserTotalRows($searchTerm: String!) {
+	userTotalRows(searchTerm: $searchTerm)
+}

@@ -7,6 +7,7 @@ fragment userInfo on User {
 	gender
 	avatar
 	phone_num
+	status
 	street
 	province {
 		id

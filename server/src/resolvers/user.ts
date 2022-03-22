@@ -1,3 +1,8 @@
+import { Promotion } from './../entities/Promotion'
+import { Specifications } from './../entities/Specifications'
+import { Product_Image } from './../entities/Product_Image'
+import { Product_Color } from './../entities/Product_Color'
+import { Product } from './../entities/Product'
 import argon2 from 'argon2'
 import {
 	Arg,
@@ -8,6 +13,7 @@ import {
 	Resolver,
 	Root,
 } from 'type-graphql'
+import { FindConditions, Like } from 'typeorm'
 import { v4 as uuidv4 } from 'uuid'
 import { COOKIE_NAME } from '../constants'
 import { User } from '../entities/User'
@@ -21,6 +27,7 @@ import { ChangePasswordInput } from './../types/ChangePasswordInput'
 import { Context } from './../types/Context'
 import { EditPasswordInput } from './../types/EditPasswordInput'
 import { ForgotPasswordInput } from './../types/ForgotPasswordInput'
+import { PaginationInput } from './../types/PaginationInput'
 import { sendEmail } from './../utils/sendEmail'
 
 @Resolver((_of) => User)
@@ -37,6 +44,50 @@ export class UserResolver {
 			relations: ['province', 'district', 'village'],
 		})
 		return user
+	}
+
+	@Query((_return) => Number)
+	async userTotalRows(
+		@Arg('searchTerm') searchTerm: string,
+	): Promise<number | null> {
+		try {
+			if (searchTerm === '') {
+				return await User.count()
+			}
+			return await User.count({ username: Like(`%${searchTerm}%`) })
+		} catch (error) {
+			console.log(error)
+			return null
+		}
+	}
+
+	@Query((_return) => [User])
+	async userPagination(
+		@Arg('userPaginationInput')
+		{ skip, take, searchTerm }: PaginationInput,
+	): Promise<User[] | undefined | null> {
+		try {
+			const options = {
+				order: {
+					updated_at: 'DESC',
+				},
+				skip,
+				take,
+				relations: ['province', 'district', 'village'],
+			}
+
+			return await User.find(
+				searchTerm
+					? ({
+							where: { name: Like(`%${searchTerm}%`) },
+							...options,
+					  } as FindConditions<User>)
+					: ({ ...options } as FindConditions<User>),
+			)
+		} catch (error) {
+			console.log(error)
+			return null
+		}
 	}
 
 	@Mutation((_return) => UserMutationResponse)
@@ -412,5 +463,29 @@ export class UserResolver {
 				message: `Internal server error ${error.message}`,
 			}
 		}
+	}
+
+	@Mutation((_return) => String)
+	async delUser(@Arg('id') id: number): Promise<string> {
+		const products = await Product.find({
+			where: [{ userCreatedId: id }, { userUpdatedId: id }],
+		})
+
+		for (let i = 0; i < products.length; i++) {
+			await Product_Color.delete({
+				productId: products[i].id,
+			})
+			await Product_Image.delete({
+				productId: products[i].id,
+			})
+			await Specifications.delete({
+				productId: products[i].id,
+			})
+			await Promotion.delete({ productId: products[i].id })
+			await Product.delete({ id: products[i].id })
+		}
+
+		await User.delete(id)
+		return 'successfully'
 	}
 }

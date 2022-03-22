@@ -1,0 +1,5 @@
+mutation AddOrEditPromotion(
+	$addOrEditPromotionInput: AddOrEditPromotionInput!
+) {
+	addOrEditPromotion(addOrEditPromotionInput: $addOrEditPromotionInput)
+}

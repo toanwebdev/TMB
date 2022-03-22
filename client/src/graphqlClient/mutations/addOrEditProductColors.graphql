@@ -1,0 +1,7 @@
+mutation AddOrEditProductColors(
+	$addOrEditProductColorsInput: AddOrEditProductColorsInput!
+) {
+	addOrEditProductColors(
+		addOrEditProductColorsInput: $addOrEditProductColorsInput
+	)
+}

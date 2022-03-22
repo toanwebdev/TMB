@@ -1,15 +1,17 @@
 import { Arg, Mutation, Resolver } from 'type-graphql'
 import { Product_Color } from './../entities/Product_Color'
-import { AddProductColorsInput } from './../types/AddProductColorsInput'
+import { AddOrEditProductColorsInput } from './../types/AddOrEditProductColorsInput'
 
 @Resolver()
 export class ProductColorResolver {
 	@Mutation((_return) => String)
-	async addProductColors(
-		@Arg('addProductColorsInput')
-		{ productId, colorIds }: AddProductColorsInput,
+	async addOrEditProductColors(
+		@Arg('addOrEditProductColorsInput')
+		{ productId, colorIds }: AddOrEditProductColorsInput,
 	): Promise<string | null> {
 		try {
+			await Product_Color.delete({ productId })
+
 			for (let i = 0; i < colorIds.length; i++) {
 				const newProductColor = Product_Color.create({
 					productId,

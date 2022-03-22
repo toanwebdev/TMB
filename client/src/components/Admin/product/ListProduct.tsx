@@ -4,7 +4,6 @@ import {
 	IconButton,
 	Image,
 	Link,
-	Spinner,
 	Table,
 	Tbody,
 	Td,
@@ -15,12 +14,16 @@ import {
 	Tr,
 } from '@chakra-ui/react'
 import NextLink from 'next/link'
+import { useRouter } from 'next/router'
+import { toast } from 'react-toastify'
+import { useDelProductMutation } from '../../../generated/graphql'
 import { IGetProduct } from '../../../interface/product'
+import { initializeApollo } from '../../../lib/apolloClient'
 import styles from '../../../styles/Admin/product/ListProduct.module.scss'
 import numberWithCommas from '../../../utils/numberWithCommas'
 import Pagination from '../../Pagination'
 import ModalDel from '../ModalDel'
-import ModalDetails from '../ModalDetails'
+import ModalDetails from './ModalDetails'
 
 interface IListProductProps {
 	listProduct: IGetProduct[]
@@ -33,6 +36,34 @@ const ListProduct = ({
 	pagination,
 	onPaginationChange,
 }: IListProductProps) => {
+	const router = useRouter()
+	const [delProduct, { loading }] = useDelProductMutation()
+	const handleDel = async (id: number) => {
+		const delProductData = await delProduct({
+			variables: {
+				id,
+			},
+		})
+
+		if (delProductData.data?.delProduct && !loading) {
+			toast.success('Xóa sản phẩm thành công thành công 😍😍', {
+				position: 'top-right',
+				autoClose: 3000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: 'colored',
+			})
+
+			const apolloClient = initializeApollo()
+			apolloClient.resetStore()
+
+			router.push('/quan-tri/san-pham')
+		}
+	}
+
 	return (
 		<Box className={styles.wrapper}>
 			<Table size='sm'>
@@ -55,8 +86,15 @@ const ListProduct = ({
 								<Flex
 									justifyContent='center'
 									alignItems='center'
-									minHeight={`${157 * pagination.limit}px`}>
-									<Spinner />
+									direction='column'
+									minHeight={`${157 * pagination.limit}px`}
+									fontSize='16px'
+									fontWeight={600}
+									color='#555'>
+									<i
+										className='bx bx-package'
+										style={{ fontSize: '50px', marginBottom: '10px' }}></i>
+									<span>Không có sản phẩm phù hợp</span>
 								</Flex>
 							</Td>
 						</Tr>
@@ -105,22 +143,31 @@ const ListProduct = ({
 											</Link>
 										</NextLink>
 
-										<ModalDel name={item.name} />
+										<ModalDel
+											id={parseInt(item.id as string)}
+											title={'Xóa sản phẩm'}
+											content={item.name}
+											onHandleDel={handleDel}
+											isLoading={loading}
+										/>
 									</Flex>
 								</Td>
 							</Tr>
 						))
 					)}
 				</Tbody>
+
 				<Tfoot>
 					<Tr>
 						<Th colSpan={8}>
-							<Flex justifyContent='flex-end'>
-								<Pagination
-									pagination={pagination}
-									onPaginationChange={onPaginationChange}
-								/>
-							</Flex>
+							{listProduct.length > 0 && (
+								<Flex justifyContent='flex-end'>
+									<Pagination
+										pagination={pagination}
+										onPaginationChange={onPaginationChange}
+									/>
+								</Flex>
+							)}
 						</Th>
 					</Tr>
 				</Tfoot>

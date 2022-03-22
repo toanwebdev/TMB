@@ -18,7 +18,7 @@ interface ICartFormProps {
 }
 
 const CartForm = ({ cities }: ICartFormProps) => {
-	const [radio, setRadio] = useState('1')
+	const [radio, setRadio] = useState('0')
 
 	return (
 		<Box className={styles.wrapper}>
@@ -27,15 +27,17 @@ const CartForm = ({ cities }: ICartFormProps) => {
 			<RadioGroup defaultValue='1' className={styles.form_radio_wrapper}>
 				<Stack spacing={5} direction='row'>
 					<Radio
-						value='1'
+						value='0'
 						className={styles.form_radio}
-						onClick={() => setRadio('1')}>
+						onClick={() => setRadio('0')}
+						isChecked={radio == '0'}>
 						<span className={styles.form_radio_label}>Anh</span>
 					</Radio>
 					<Radio
-						value='2'
+						value='1'
 						className={styles.form_radio}
-						onClick={() => setRadio('2')}>
+						onClick={() => setRadio('1')}
+						isChecked={radio == '1'}>
 						<span className={styles.form_radio_label}>Chị</span>
 					</Radio>
 				</Stack>
@@ -55,17 +57,17 @@ const CartForm = ({ cities }: ICartFormProps) => {
 				className={styles.form_address_wrapper}>
 				<CartFormMenuItem
 					menus={cities}
-					initAddress='Chọn tỉnh, thành phố'
+					initAddress={{ id: '-1', name: 'Chọn tỉnh, thành phố' }}
 					placeholder='Nhập tỉnh, thành để tìm kiếm nhanh'
 				/>
 				<CartFormMenuItem
 					menus={cities}
-					initAddress='Chọn quận, huyện'
+					initAddress={{ id: '-1', name: 'Chọn quận, huyện' }}
 					placeholder='Nhập quận, huyện để tìm kiếm nhanh'
 				/>
 				<CartFormMenuItem
 					menus={cities}
-					initAddress='Chọn phường, xã'
+					initAddress={{ id: '-1', name: 'Chọn phường, xã' }}
 					placeholder='Nhập phường, xã để tìm kiếm nhanh'
 				/>
 				<Input placeholder='Số nhà, tên đường' className={styles.form_input} />

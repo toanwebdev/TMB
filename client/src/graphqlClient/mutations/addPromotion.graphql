@@ -1,3 +1,0 @@
-mutation AddPromotion($addPromotionInput: AddPromotionInput!) {
-	addPromotion(addPromotionInput: $addPromotionInput)
-}

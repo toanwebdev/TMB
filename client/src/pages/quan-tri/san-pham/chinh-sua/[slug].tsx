@@ -13,6 +13,7 @@ const EditProduct = () => {
 	const [product, setProduct] = useState<IGetProduct>()
 
 	const { data: productData, loading: productLoading } = useProductBySlugQuery({
+		fetchPolicy: 'no-cache',
 		variables: {
 			productSlug: router.query.slug as string,
 		},

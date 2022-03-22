@@ -1,0 +1,7 @@
+mutation AddOrEditProductImages(
+	$addOrEditProductImagesInput: AddOrEditProductImagesInput!
+) {
+	addOrEditProductImages(
+		addOrEditProductImagesInput: $addOrEditProductImagesInput
+	)
+}

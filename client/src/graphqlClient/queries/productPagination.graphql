@@ -1,4 +1,4 @@
-query ProductPagination($productPaginationInput: ProductPaginationInput!) {
+query ProductPagination($productPaginationInput: PaginationInput!) {
 	productPagination(productPaginationInput: $productPaginationInput) {
 		id
 		name

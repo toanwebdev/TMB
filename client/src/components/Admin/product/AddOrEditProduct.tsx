@@ -7,11 +7,8 @@ import {
 	IconButton,
 	Input,
 	Link,
-	NumberDecrementStepper,
-	NumberIncrementStepper,
 	NumberInput,
 	NumberInputField,
-	NumberInputStepper,
 	Select,
 	Spinner,
 	Stack,
@@ -30,11 +27,12 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import {
-	useAddProductColorsMutation,
-	useAddProductImagesMutation,
-	useAddProductMutation,
-	useAddPromotionMutation,
-	useAddSpecificationsMutation,
+	AddOrEditProductInput,
+	useAddOrEditProductColorsMutation,
+	useAddOrEditProductImagesMutation,
+	useAddOrEditProductMutation,
+	useAddOrEditPromotionMutation,
+	useAddOrEditSpecificationsMutation,
 	useBrandByIdsQuery,
 	useBrandCategoriesQuery,
 	useCategoryAllQuery,
@@ -71,7 +69,7 @@ const AddOrEditProduct = ({ product }: IAddOrEditProductProps) => {
 	const [categoryId, setCategoryId] = useState(initCategoryId)
 
 	let colorIds: Array<number> = []
-	if (product && product.product_colors) {
+	if (product && product.product_colors.length > 0) {
 		for (let i = 0; i < product.product_colors.length; i++) {
 			colorIds = [...colorIds, product.product_colors[i].colorId as number]
 		}
@@ -81,13 +79,14 @@ const AddOrEditProduct = ({ product }: IAddOrEditProductProps) => {
 	const [colors, setColors] = useState(initColors)
 	const { data: colorByIdsData, loading: colorByIdsLoading } =
 		useColorByIdsQuery({
+			fetchPolicy: 'no-cache',
 			variables: {
 				colorByIdsInput: { colorIds: colorIds.length === 0 ? [-1] : colorIds },
 			},
 		})
 
 	useEffect(() => {
-		if (colorByIdsData && colorByIdsData.colorByIds) {
+		if (colorByIdsData && colorByIdsData.colorByIds.length > 0) {
 			setColors(colorByIdsData.colorByIds)
 		}
 	}, [colorByIdsLoading])
@@ -100,7 +99,7 @@ const AddOrEditProduct = ({ product }: IAddOrEditProductProps) => {
 	const [files, setFiles] = useState(initFiles)
 
 	useEffect(() => {
-		if (product && product.product_images) {
+		if (product && product.product_images.length > 0) {
 			let index = 0
 			for (let i = 0; i < product.product_images.length; i++) {
 				if (
@@ -134,7 +133,7 @@ const AddOrEditProduct = ({ product }: IAddOrEditProductProps) => {
 	const [specis, setSpecis] = useState(initSpecis)
 
 	useEffect(() => {
-		if (product && product.specificationses) {
+		if (product && product.specificationses.length > 0) {
 			initSpecis = []
 			for (let i = 0; i < product.specificationses.length; i++) {
 				initSpecis = [
@@ -154,7 +153,7 @@ const AddOrEditProduct = ({ product }: IAddOrEditProductProps) => {
 	const [promotions, setPromotions] = useState(initPromotions)
 
 	useEffect(() => {
-		if (product && product.promotions) {
+		if (product && product.promotions.length > 0) {
 			initPromotions = []
 			for (let i = 0; i < product.promotions.length; i++) {
 				initPromotions = [...initPromotions, product.promotions[i].content]
@@ -205,11 +204,11 @@ const AddOrEditProduct = ({ product }: IAddOrEditProductProps) => {
 	const { data: colorAllData } = useColorAllQuery()
 
 	const [multipleUpload] = useMultipleUploadMutation()
-	const [addProductColors] = useAddProductColorsMutation()
-	const [addProductImages] = useAddProductImagesMutation()
-	const [addProduct] = useAddProductMutation()
-	const [addSpecifications] = useAddSpecificationsMutation()
-	const [addPromotion] = useAddPromotionMutation()
+	const [addOrEditProductColors] = useAddOrEditProductColorsMutation()
+	const [addOrEditProductImages] = useAddOrEditProductImagesMutation()
+	const [addOrEditProduct] = useAddOrEditProductMutation()
+	const [addOrEditSpecifications] = useAddOrEditSpecificationsMutation()
+	const [addOrEditPromotion] = useAddOrEditPromotionMutation()
 
 	const handleUpload = (cb: any) => {
 		let input = document.createElement('input')
@@ -275,8 +274,8 @@ const AddOrEditProduct = ({ product }: IAddOrEditProductProps) => {
 				for (let i = 0; i < files.length; i++) {
 					if (files[i].id === id) {
 						if (id !== '-1') {
-							files[i].fileItems.splice(index + 1, 0, file)
-							files[i].images.splice(index + 1, 0, image)
+							files[i].fileItems.splice(index, 0, file)
+							files[i].images.splice(index, 0, image)
 						} else {
 							files[i].fileItems.splice(index, 1, file)
 							files[i].images.splice(index, 1, image)
@@ -378,27 +377,45 @@ const AddOrEditProduct = ({ product }: IAddOrEditProductProps) => {
 
 	const onAddOrEditProductSubmit = async (values: any) => {
 		let fileUploads: Array<any> = []
+		let avatarUpload = ''
 
 		for (let i = 0; i < files.length; i++) {
 			for (let j = 0; j < files[i].fileItems.length; j++) {
-				if (files[i].fileItems[j] !== 'del') {
-					fileUploads = [...fileUploads, files[i].fileItems[j]]
+				if (files[i].fileItems[j] !== 'del' && files[i].fileItems[j] !== '') {
+					if (files[i].id === '-1') {
+						avatarUpload = files[i].fileItems[j]
+					} else {
+						fileUploads = [...fileUploads, files[i].fileItems[j]]
+					}
 				}
 			}
 		}
 
-		const multipleUploadData = await multipleUpload({
-			variables: {
-				files: fileUploads,
-			},
-		})
+		let singleUploadData: any = ''
+		if (avatarUpload) {
+			singleUploadData = await singleUpload({
+				variables: {
+					file: avatarUpload,
+				},
+			})
+		}
 
-		let avatar = multipleUploadData.data
-			? (multipleUploadData.data?.multipleUpload[0] as string)
-			: ''
+		let multipleUploadData: any = ''
+		if (fileUploads.length > 0) {
+			multipleUploadData = await multipleUpload({
+				variables: {
+					files: fileUploads,
+				},
+			})
+		}
 
-		const updateValues = {
+		let avatar = singleUploadData?.data
+			? singleUploadData.data?.singleUpload
+			: product?.avatar
+
+		const updateValues: AddOrEditProductInput = {
 			...values,
+			id: product ? product.id : '',
 			name: nameProduct,
 			slug: slugProduct,
 			avatar,
@@ -412,9 +429,9 @@ const AddOrEditProduct = ({ product }: IAddOrEditProductProps) => {
 			description,
 		}
 
-		const addProductData = await addProduct({
+		const addOrEditProductData = await addOrEditProduct({
 			variables: {
-				addProductInput: updateValues,
+				addOrEditProductInput: updateValues,
 			},
 		})
 
@@ -423,11 +440,11 @@ const AddOrEditProduct = ({ product }: IAddOrEditProductProps) => {
 			colorIds = [...colorIds, parseInt(colors[i].id)]
 		}
 
-		await addProductColors({
+		await addOrEditProductColors({
 			variables: {
-				addProductColorsInput: {
+				addOrEditProductColorsInput: {
 					productId: parseInt(
-						addProductData.data?.addProduct.product?.id as string,
+						addOrEditProductData.data?.addOrEditProduct.product?.id as string,
 					),
 					colorIds,
 				},
@@ -436,30 +453,37 @@ const AddOrEditProduct = ({ product }: IAddOrEditProductProps) => {
 
 		let colorLinks: Array<{ id: number; links: string[] }> = []
 		let vtColor = 0
-		for (let i = 1; i < files.length; i++) {
-			let newColorLinks: { id: number; links: string[] } = {
-				id: -1,
-				links: [],
-			}
+		if (multipleUploadData && multipleUploadData.data) {
+			for (let i = 1; i < files.length; i++) {
+				let newColorLinks: { id: number; links: string[] } = {
+					id: -1,
+					links: [],
+				}
 
-			newColorLinks.id = parseInt(files[i].id)
-			for (let j = 0; j < files[i].fileItems.length; j++) {
-				if (files[i].fileItems[j] !== '' && files[i].fileItems[j] !== 'del') {
-					vtColor++
-					newColorLinks.links = [
-						...newColorLinks.links,
-						multipleUploadData.data?.multipleUpload[vtColor] as string,
-					]
+				if (colorIds.includes(parseInt(files[i].id))) {
+					newColorLinks.id = parseInt(files[i].id)
+					for (let j = 0; j < files[i].fileItems.length; j++) {
+						if (
+							files[i].fileItems[j] !== '' &&
+							files[i].fileItems[j] !== 'del'
+						) {
+							newColorLinks.links = [
+								...newColorLinks.links,
+								multipleUploadData.data?.multipleUpload[vtColor] as string,
+							]
+							vtColor++
+						}
+					}
+					colorLinks = [...colorLinks, newColorLinks]
 				}
 			}
-			colorLinks = [...colorLinks, newColorLinks]
 		}
 
-		await addProductImages({
+		await addOrEditProductImages({
 			variables: {
-				addProductImagesInput: {
+				addOrEditProductImagesInput: {
 					productId: parseInt(
-						addProductData.data?.addProduct.product?.id as string,
+						addOrEditProductData.data?.addOrEditProduct.product?.id as string,
 					),
 					colorLinks,
 				},
@@ -472,11 +496,11 @@ const AddOrEditProduct = ({ product }: IAddOrEditProductProps) => {
 				newSpecis = [...newSpecis, specis[i]]
 			}
 		}
-		await addSpecifications({
+		await addOrEditSpecifications({
 			variables: {
-				addSpecificationsInput: {
+				addOrEditSpecificationsInput: {
 					productId: parseInt(
-						addProductData.data?.addProduct.product?.id as string,
+						addOrEditProductData.data?.addOrEditProduct.product?.id as string,
 					),
 					specis: newSpecis,
 				},
@@ -490,18 +514,18 @@ const AddOrEditProduct = ({ product }: IAddOrEditProductProps) => {
 			}
 		}
 
-		await addPromotion({
+		await addOrEditPromotion({
 			variables: {
-				addPromotionInput: {
+				addOrEditPromotionInput: {
 					productId: parseInt(
-						addProductData.data?.addProduct.product?.id as string,
+						addOrEditProductData.data?.addOrEditProduct.product?.id as string,
 					),
 					contents: newPromotions,
 				},
 			},
 		})
 
-		if (addProductData.data?.addProduct.product) {
+		if (addOrEditProductData.data?.addOrEditProduct.product) {
 			toast.success(
 				`${product ? 'Chỉnh sửa' : 'Thêm'} sản phẩm thành công thành công 😍😍`,
 				{
@@ -644,10 +668,6 @@ const AddOrEditProduct = ({ product }: IAddOrEditProductProps) => {
 									placeholder='Số lượng'
 									type='text'
 								/>
-								<NumberInputStepper>
-									<NumberIncrementStepper />
-									<NumberDecrementStepper />
-								</NumberInputStepper>
 							</NumberInput>
 						</Box>
 						{/* quantity */}

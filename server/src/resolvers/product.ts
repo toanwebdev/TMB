@@ -1,40 +1,75 @@
-import { EditProductInput } from './../types/EditProductInput'
+import { AddOrEditProductInput } from './../types/AddOrEditProductInput'
 import { Arg, Mutation, Query, Resolver } from 'type-graphql'
+import { FindConditions, Like } from 'typeorm'
 import { Product } from './../entities/Product'
-import { AddProductInput } from './../types/AddProductInput'
+import { Product_Color } from './../entities/Product_Color'
+import { Product_Image } from './../entities/Product_Image'
+import { Promotion } from './../entities/Promotion'
+import { Specifications } from './../entities/Specifications'
 import { ProductMutationResponse } from './../types/ProductMutationResponse'
-import { ProductPaginationInput } from './../types/ProductPaginationInput'
+import { PaginationInput } from '../types/PaginationInput'
 
 @Resolver()
 export class ProductResolver {
 	@Mutation((_return) => ProductMutationResponse)
-	async addProduct(
-		@Arg('addProductInput') addProductInput: AddProductInput,
+	async addOrEditProduct(
+		@Arg('addOrEditProductInput')
+		{ id, ...addOrEditProductInput }: AddOrEditProductInput,
 	): Promise<ProductMutationResponse> {
 		try {
-			const { slug, avatar } = addProductInput
-			const product = await Product.findOne({ where: [{ slug }, { avatar }] })
-			if (product) {
-				return {
-					code: 400,
-					success: false,
-					message: 'Duplicated product',
-					errors: [
-						{
-							field: 'name',
-							message: 'Sản phẩm đã tồn tại.',
-						},
-					],
+			if (!id) {
+				const { slug, avatar } = addOrEditProductInput
+				const product = await Product.findOne({ where: [{ slug }, { avatar }] })
+				if (product) {
+					return {
+						code: 400,
+						success: false,
+						message: 'Duplicated product',
+						errors: [
+							{
+								field: 'name',
+								message: 'Sản phẩm đã tồn tại.',
+							},
+						],
+					}
 				}
-			}
 
-			const newProduct = Product.create({ ...addProductInput })
-			await newProduct.save()
-			return {
-				code: 200,
-				success: true,
-				message: 'Add product successful',
-				product: newProduct,
+				const newProduct = Product.create({ ...addOrEditProductInput })
+				await newProduct.save()
+				return {
+					code: 200,
+					success: true,
+					message: 'Add product successful',
+					product: newProduct,
+				}
+			} else {
+				const product = await Product.findOne(id)
+				if (!product) {
+					return {
+						code: 400,
+						success: false,
+						message: 'Product not found',
+						errors: [
+							{
+								field: 'name',
+								message: 'Sản phẩm không tồn tại.',
+							},
+						],
+					}
+				}
+
+				await Product.update(id, {
+					...addOrEditProductInput,
+				})
+
+				const productUpdated = await Product.findOne(id)
+
+				return {
+					code: 200,
+					success: true,
+					message: 'Updated product successful',
+					product: productUpdated,
+				}
 			}
 		} catch (error) {
 			console.log(error)
@@ -44,51 +79,38 @@ export class ProductResolver {
 				message: `Internal server error ${error.message}`,
 			}
 		}
-	}
 
-	@Mutation((_return) => ProductMutationResponse)
-	async editProduct(
-		@Arg('editProductInput') { id, ...editProductInput }: EditProductInput,
-	): Promise<ProductMutationResponse> {
-		try {
-			let product = await Product.findOne({ id })
-			if (!product) {
-				return {
-					code: 400,
-					success: false,
-					message: 'Product not found',
-					errors: [
-						{
-							field: 'name',
-							message: 'Sản phẩm không tồn tại.',
-						},
-					],
-				}
-			}
-
-			await Product.update(id, { ...editProductInput })
-
+		let product = await Product.findOne(id)
+		if (!product) {
 			return {
-				code: 200,
-				success: true,
-				message: 'Edit product successful',
-			}
-		} catch (error) {
-			console.log(error)
-			return {
-				code: 500,
+				code: 400,
 				success: false,
-				message: `Internal server error ${error.message}`,
+				message: 'Product not found',
+				errors: [
+					{
+						field: 'name',
+						message: 'Sản phẩm không tồn tại.',
+					},
+				],
 			}
+		}
+
+		await Product.update(id, { ...addOrEditProductInput })
+
+		return {
+			code: 200,
+			success: true,
+			message: 'Edit product successful',
 		}
 	}
 
 	@Query((_return) => [Product])
 	async productPagination(
-		@Arg('productPaginationInput') { skip, take }: ProductPaginationInput,
+		@Arg('productPaginationInput')
+		{ skip, take, searchTerm }: PaginationInput,
 	): Promise<Product[] | undefined | null> {
 		try {
-			return await Product.find({
+			const options = {
 				order: {
 					updated_at: 'DESC',
 				},
@@ -104,7 +126,16 @@ export class ProductResolver {
 					'specificationses',
 					'promotions',
 				],
-			})
+			}
+
+			return await Product.find(
+				searchTerm
+					? ({
+							where: { name: Like(`%${searchTerm}%`) },
+							...options,
+					  } as FindConditions<Product>)
+					: ({ ...options } as FindConditions<Product>),
+			)
 		} catch (error) {
 			console.log(error)
 			return null
@@ -112,9 +143,14 @@ export class ProductResolver {
 	}
 
 	@Query((_return) => Number)
-	async totalRows(): Promise<number | null> {
+	async productTotalRows(
+		@Arg('searchTerm') searchTerm: string,
+	): Promise<number | null> {
 		try {
-			return await Product.count()
+			if (searchTerm === '') {
+				return await Product.count()
+			}
+			return await Product.count({ name: Like(`%${searchTerm}%`) })
 		} catch (error) {
 			console.log(error)
 			return null
@@ -145,5 +181,15 @@ export class ProductResolver {
 			console.log(error)
 			return null
 		}
+	}
+
+	@Mutation((_return) => String)
+	async delProduct(@Arg('id') id: number): Promise<String> {
+		await Product_Color.delete({ productId: id })
+		await Product_Image.delete({ productId: id })
+		await Specifications.delete({ productId: id })
+		await Promotion.delete({ productId: id })
+		await Product.delete(id)
+		return 'successfully'
 	}
 }

@@ -1,11 +1,10 @@
-import { Field, ObjectType } from 'type-graphql'
+import { Field, ID, ObjectType } from 'type-graphql'
 import {
 	BaseEntity,
-	CreateDateColumn,
+	Column,
 	Entity,
 	ManyToOne,
-	PrimaryColumn,
-	UpdateDateColumn,
+	PrimaryGeneratedColumn,
 } from 'typeorm'
 import { Color } from './Color'
 import { Product } from './Product'
@@ -13,25 +12,21 @@ import { Product } from './Product'
 @ObjectType()
 @Entity()
 export class Product_Color extends BaseEntity {
+	@Field((_type) => ID)
+	@PrimaryGeneratedColumn()
+	id!: number
+
 	@Field()
-	@PrimaryColumn()
+	@Column()
 	colorId!: number
 
 	@ManyToOne((_to) => Color, (color) => color.product_colors)
 	color!: Color
 
 	@Field()
-	@PrimaryColumn()
+	@Column()
 	productId!: number
 
 	@ManyToOne((_to) => Product, (product) => product.product_colors)
 	product!: Product
-
-	@Field()
-	@CreateDateColumn()
-	created_at: Date
-
-	@Field()
-	@UpdateDateColumn()
-	updated_at: Date
 }

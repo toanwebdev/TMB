@@ -62,6 +62,7 @@ export class User extends BaseEntity {
 	@MaxLength(100)
 	password!: string
 
+	@Field()
 	@Column({ default: 1 })
 	status!: number
 

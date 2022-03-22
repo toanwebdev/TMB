@@ -1,0 +1,3 @@
+query ProductTotalRows($searchTerm: String!) {
+	productTotalRows(searchTerm: $searchTerm)
+}

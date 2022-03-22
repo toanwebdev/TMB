@@ -19,17 +19,17 @@ export type Scalars = {
   Upload: any;
 };
 
-export type AddProductColorsInput = {
+export type AddOrEditProductColorsInput = {
   colorIds: Array<Scalars['Float']>;
   productId: Scalars['Float'];
 };
 
-export type AddProductImagesInput = {
+export type AddOrEditProductImagesInput = {
   colorLinks: Array<ColorLinks>;
   productId: Scalars['Float'];
 };
 
-export type AddProductInput = {
+export type AddOrEditProductInput = {
   avatar: Scalars['String'];
   best_sell: Scalars['Boolean'];
   brandId: Scalars['Float'];
@@ -38,6 +38,7 @@ export type AddProductInput = {
   discount: Scalars['Float'];
   gift: Scalars['Float'];
   highlight: Scalars['Boolean'];
+  id: Scalars['String'];
   installment: Scalars['Boolean'];
   name: Scalars['String'];
   new: Scalars['Boolean'];
@@ -49,12 +50,12 @@ export type AddProductInput = {
   userUpdatedId: Scalars['Float'];
 };
 
-export type AddPromotionInput = {
+export type AddOrEditPromotionInput = {
   contents: Array<Scalars['String']>;
   productId: Scalars['Float'];
 };
 
-export type AddSpecificationsInput = {
+export type AddOrEditSpecificationsInput = {
   productId: Scalars['Float'];
   specis: Array<Specis>;
 };
@@ -139,27 +140,6 @@ export type EditPasswordInput = {
   password: Scalars['String'];
 };
 
-export type EditProductInput = {
-  avatar: Scalars['String'];
-  best_sell: Scalars['Boolean'];
-  brandId: Scalars['Float'];
-  categoryId: Scalars['Float'];
-  description: Scalars['String'];
-  discount: Scalars['Float'];
-  gift: Scalars['Float'];
-  highlight: Scalars['Boolean'];
-  id: Scalars['Float'];
-  installment: Scalars['Boolean'];
-  name: Scalars['String'];
-  new: Scalars['Boolean'];
-  price: Scalars['Float'];
-  price_input: Scalars['Float'];
-  quantity: Scalars['Float'];
-  slug: Scalars['String'];
-  userCreatedId: Scalars['Float'];
-  userUpdatedId: Scalars['Float'];
-};
-
 export type FieldError = {
   __typename?: 'FieldError';
   field: Scalars['String'];
@@ -183,15 +163,16 @@ export type LoginInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  addProduct: ProductMutationResponse;
-  addProductColors: Scalars['String'];
-  addProductImages: Scalars['String'];
-  addPromotion: Scalars['String'];
-  addSpecifications: Scalars['String'];
+  addOrEditProduct: ProductMutationResponse;
+  addOrEditProductColors: Scalars['String'];
+  addOrEditProductImages: Scalars['String'];
+  addOrEditPromotion: Scalars['String'];
+  addOrEditSpecifications: Scalars['String'];
   changePassword: UserMutationResponse;
   changeUserProfile: UserMutationResponse;
+  delProduct: Scalars['String'];
+  delUser: Scalars['String'];
   editPassword: UserMutationResponse;
-  editProduct: ProductMutationResponse;
   forgotPassword: Scalars['Boolean'];
   login: UserMutationResponse;
   logout: Scalars['Boolean'];
@@ -201,28 +182,28 @@ export type Mutation = {
 };
 
 
-export type MutationAddProductArgs = {
-  addProductInput: AddProductInput;
+export type MutationAddOrEditProductArgs = {
+  addOrEditProductInput: AddOrEditProductInput;
 };
 
 
-export type MutationAddProductColorsArgs = {
-  addProductColorsInput: AddProductColorsInput;
+export type MutationAddOrEditProductColorsArgs = {
+  addOrEditProductColorsInput: AddOrEditProductColorsInput;
 };
 
 
-export type MutationAddProductImagesArgs = {
-  addProductImagesInput: AddProductImagesInput;
+export type MutationAddOrEditProductImagesArgs = {
+  addOrEditProductImagesInput: AddOrEditProductImagesInput;
 };
 
 
-export type MutationAddPromotionArgs = {
-  addPromotionInput: AddPromotionInput;
+export type MutationAddOrEditPromotionArgs = {
+  addOrEditPromotionInput: AddOrEditPromotionInput;
 };
 
 
-export type MutationAddSpecificationsArgs = {
-  addSpecificationsInput: AddSpecificationsInput;
+export type MutationAddOrEditSpecificationsArgs = {
+  addOrEditSpecificationsInput: AddOrEditSpecificationsInput;
 };
 
 
@@ -238,13 +219,18 @@ export type MutationChangeUserProfileArgs = {
 };
 
 
-export type MutationEditPasswordArgs = {
-  editPasswordInput: EditPasswordInput;
+export type MutationDelProductArgs = {
+  id: Scalars['Float'];
 };
 
 
-export type MutationEditProductArgs = {
-  editProductInput: EditProductInput;
+export type MutationDelUserArgs = {
+  id: Scalars['Float'];
+};
+
+
+export type MutationEditPasswordArgs = {
+  editPasswordInput: EditPasswordInput;
 };
 
 
@@ -270,6 +256,12 @@ export type MutationRegisterArgs = {
 
 export type MutationSingleUploadArgs = {
   file: Scalars['Upload'];
+};
+
+export type PaginationInput = {
+  searchTerm: Scalars['String'];
+  skip: Scalars['Float'];
+  take: Scalars['Float'];
 };
 
 export type Product = {
@@ -313,17 +305,10 @@ export type ProductMutationResponse = IMutationResponse & {
   success: Scalars['Boolean'];
 };
 
-export type ProductPaginationInput = {
-  skip: Scalars['Float'];
-  take: Scalars['Float'];
-};
-
 export type Product_Color = {
   __typename?: 'Product_Color';
   colorId: Scalars['Float'];
-  created_at: Scalars['DateTime'];
   productId: Scalars['Float'];
-  updated_at: Scalars['DateTime'];
 };
 
 export type Product_Image = {
@@ -364,8 +349,10 @@ export type Query = {
   me?: Maybe<User>;
   productBySlug: Product;
   productPagination: Array<Product>;
+  productTotalRows: Scalars['Float'];
   provinceAll: Array<Province>;
-  totalRows: Scalars['Float'];
+  userPagination: Array<User>;
+  userTotalRows: Scalars['Float'];
   villageAll: Array<Village>;
 };
 
@@ -396,7 +383,22 @@ export type QueryProductBySlugArgs = {
 
 
 export type QueryProductPaginationArgs = {
-  productPaginationInput: ProductPaginationInput;
+  productPaginationInput: PaginationInput;
+};
+
+
+export type QueryProductTotalRowsArgs = {
+  searchTerm: Scalars['String'];
+};
+
+
+export type QueryUserPaginationArgs = {
+  userPaginationInput: PaginationInput;
+};
+
+
+export type QueryUserTotalRowsArgs = {
+  searchTerm: Scalars['String'];
 };
 
 
@@ -442,6 +444,7 @@ export type User = {
   phone_num?: Maybe<Scalars['String']>;
   province?: Maybe<Province>;
   provinceId?: Maybe<Scalars['Float']>;
+  status: Scalars['Float'];
   street?: Maybe<Scalars['String']>;
   updated_at: Scalars['DateTime'];
   username: Scalars['String'];
@@ -475,44 +478,44 @@ export type ProductInfoFragment = { __typename?: 'Product', id: string, name: st
 
 export type ProductMutationResponseFragment = { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null | undefined, product?: { __typename?: 'Product', id: string, name: string, slug?: string | null | undefined, avatar: string, description?: string | null | undefined, installment: boolean, best_sell: boolean, highlight: boolean, new: boolean, price_input: number, discount?: number | null | undefined, price: number, gift?: number | null | undefined, quantity: number } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined };
 
-export type UserInfoFragment = { __typename?: 'User', id: string, last_name: string, first_name: string, username: string, email: string, gender: string, avatar?: string | null | undefined, phone_num?: string | null | undefined, street?: string | null | undefined, province?: { __typename?: 'Province', id: string, name: string } | null | undefined, district?: { __typename?: 'District', id: string, name: string } | null | undefined, village?: { __typename?: 'Village', id: string, name: string } | null | undefined };
+export type UserInfoFragment = { __typename?: 'User', id: string, last_name: string, first_name: string, username: string, email: string, gender: string, avatar?: string | null | undefined, phone_num?: string | null | undefined, status: number, street?: string | null | undefined, province?: { __typename?: 'Province', id: string, name: string } | null | undefined, district?: { __typename?: 'District', id: string, name: string } | null | undefined, village?: { __typename?: 'Village', id: string, name: string } | null | undefined };
 
-export type UserMutationResponseFragment = { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, last_name: string, first_name: string, username: string, email: string, gender: string, avatar?: string | null | undefined, phone_num?: string | null | undefined, street?: string | null | undefined, province?: { __typename?: 'Province', id: string, name: string } | null | undefined, district?: { __typename?: 'District', id: string, name: string } | null | undefined, village?: { __typename?: 'Village', id: string, name: string } | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined };
+export type UserMutationResponseFragment = { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, last_name: string, first_name: string, username: string, email: string, gender: string, avatar?: string | null | undefined, phone_num?: string | null | undefined, status: number, street?: string | null | undefined, province?: { __typename?: 'Province', id: string, name: string } | null | undefined, district?: { __typename?: 'District', id: string, name: string } | null | undefined, village?: { __typename?: 'Village', id: string, name: string } | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined };
 
-export type AddProductMutationVariables = Exact<{
-  addProductInput: AddProductInput;
+export type AddOrEditProductMutationVariables = Exact<{
+  addOrEditProductInput: AddOrEditProductInput;
 }>;
 
 
-export type AddProductMutation = { __typename?: 'Mutation', addProduct: { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null | undefined, product?: { __typename?: 'Product', id: string, name: string, slug?: string | null | undefined, avatar: string, description?: string | null | undefined, installment: boolean, best_sell: boolean, highlight: boolean, new: boolean, price_input: number, discount?: number | null | undefined, price: number, gift?: number | null | undefined, quantity: number } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+export type AddOrEditProductMutation = { __typename?: 'Mutation', addOrEditProduct: { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null | undefined, product?: { __typename?: 'Product', id: string, name: string, slug?: string | null | undefined, avatar: string, description?: string | null | undefined, installment: boolean, best_sell: boolean, highlight: boolean, new: boolean, price_input: number, discount?: number | null | undefined, price: number, gift?: number | null | undefined, quantity: number } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
 
-export type AddProductColorsMutationVariables = Exact<{
-  addProductColorsInput: AddProductColorsInput;
+export type AddOrEditProductColorsMutationVariables = Exact<{
+  addOrEditProductColorsInput: AddOrEditProductColorsInput;
 }>;
 
 
-export type AddProductColorsMutation = { __typename?: 'Mutation', addProductColors: string };
+export type AddOrEditProductColorsMutation = { __typename?: 'Mutation', addOrEditProductColors: string };
 
-export type AddProductImagesMutationVariables = Exact<{
-  addProductImagesInput: AddProductImagesInput;
+export type AddOrEditProductImagesMutationVariables = Exact<{
+  addOrEditProductImagesInput: AddOrEditProductImagesInput;
 }>;
 
 
-export type AddProductImagesMutation = { __typename?: 'Mutation', addProductImages: string };
+export type AddOrEditProductImagesMutation = { __typename?: 'Mutation', addOrEditProductImages: string };
 
-export type AddPromotionMutationVariables = Exact<{
-  addPromotionInput: AddPromotionInput;
+export type AddOrEditSpecificationsMutationVariables = Exact<{
+  addOrEditSpecificationsInput: AddOrEditSpecificationsInput;
 }>;
 
 
-export type AddPromotionMutation = { __typename?: 'Mutation', addPromotion: string };
+export type AddOrEditSpecificationsMutation = { __typename?: 'Mutation', addOrEditSpecifications: string };
 
-export type AddSpecificationsMutationVariables = Exact<{
-  addSpecificationsInput: AddSpecificationsInput;
+export type AddOrEditPromotionMutationVariables = Exact<{
+  addOrEditPromotionInput: AddOrEditPromotionInput;
 }>;
 
 
-export type AddSpecificationsMutation = { __typename?: 'Mutation', addSpecifications: string };
+export type AddOrEditPromotionMutation = { __typename?: 'Mutation', addOrEditPromotion: string };
 
 export type ChangePasswordMutationVariables = Exact<{
   userId: Scalars['Float'];
@@ -521,21 +524,35 @@ export type ChangePasswordMutationVariables = Exact<{
 }>;
 
 
-export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, last_name: string, first_name: string, username: string, email: string, gender: string, avatar?: string | null | undefined, phone_num?: string | null | undefined, street?: string | null | undefined, province?: { __typename?: 'Province', id: string, name: string } | null | undefined, district?: { __typename?: 'District', id: string, name: string } | null | undefined, village?: { __typename?: 'Village', id: string, name: string } | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, last_name: string, first_name: string, username: string, email: string, gender: string, avatar?: string | null | undefined, phone_num?: string | null | undefined, status: number, street?: string | null | undefined, province?: { __typename?: 'Province', id: string, name: string } | null | undefined, district?: { __typename?: 'District', id: string, name: string } | null | undefined, village?: { __typename?: 'Village', id: string, name: string } | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
 
 export type ChangeUserProfileMutationVariables = Exact<{
   changeUserProfileInput: ChangeUserProfileInput;
 }>;
 
 
-export type ChangeUserProfileMutation = { __typename?: 'Mutation', changeUserProfile: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, last_name: string, first_name: string, username: string, email: string, gender: string, avatar?: string | null | undefined, phone_num?: string | null | undefined, street?: string | null | undefined, province?: { __typename?: 'Province', id: string, name: string } | null | undefined, district?: { __typename?: 'District', id: string, name: string } | null | undefined, village?: { __typename?: 'Village', id: string, name: string } | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+export type ChangeUserProfileMutation = { __typename?: 'Mutation', changeUserProfile: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, last_name: string, first_name: string, username: string, email: string, gender: string, avatar?: string | null | undefined, phone_num?: string | null | undefined, status: number, street?: string | null | undefined, province?: { __typename?: 'Province', id: string, name: string } | null | undefined, district?: { __typename?: 'District', id: string, name: string } | null | undefined, village?: { __typename?: 'Village', id: string, name: string } | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+
+export type DelProductMutationVariables = Exact<{
+  id: Scalars['Float'];
+}>;
+
+
+export type DelProductMutation = { __typename?: 'Mutation', delProduct: string };
+
+export type DelUserMutationVariables = Exact<{
+  id: Scalars['Float'];
+}>;
+
+
+export type DelUserMutation = { __typename?: 'Mutation', delUser: string };
 
 export type EditPasswordMutationVariables = Exact<{
   editPasswordInput: EditPasswordInput;
 }>;
 
 
-export type EditPasswordMutation = { __typename?: 'Mutation', editPassword: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, last_name: string, first_name: string, username: string, email: string, gender: string, avatar?: string | null | undefined, phone_num?: string | null | undefined, street?: string | null | undefined, province?: { __typename?: 'Province', id: string, name: string } | null | undefined, district?: { __typename?: 'District', id: string, name: string } | null | undefined, village?: { __typename?: 'Village', id: string, name: string } | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+export type EditPasswordMutation = { __typename?: 'Mutation', editPassword: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, last_name: string, first_name: string, username: string, email: string, gender: string, avatar?: string | null | undefined, phone_num?: string | null | undefined, status: number, street?: string | null | undefined, province?: { __typename?: 'Province', id: string, name: string } | null | undefined, district?: { __typename?: 'District', id: string, name: string } | null | undefined, village?: { __typename?: 'Village', id: string, name: string } | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
 
 export type ForgotPasswordMutationVariables = Exact<{
   forgotPasswordInput: ForgotPasswordInput;
@@ -549,7 +566,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, last_name: string, first_name: string, username: string, email: string, gender: string, avatar?: string | null | undefined, phone_num?: string | null | undefined, street?: string | null | undefined, province?: { __typename?: 'Province', id: string, name: string } | null | undefined, district?: { __typename?: 'District', id: string, name: string } | null | undefined, village?: { __typename?: 'Village', id: string, name: string } | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, last_name: string, first_name: string, username: string, email: string, gender: string, avatar?: string | null | undefined, phone_num?: string | null | undefined, status: number, street?: string | null | undefined, province?: { __typename?: 'Province', id: string, name: string } | null | undefined, district?: { __typename?: 'District', id: string, name: string } | null | undefined, village?: { __typename?: 'Village', id: string, name: string } | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -568,7 +585,7 @@ export type RegisterMutationVariables = Exact<{
 }>;
 
 
-export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, last_name: string, first_name: string, username: string, email: string, gender: string, avatar?: string | null | undefined, phone_num?: string | null | undefined, street?: string | null | undefined, province?: { __typename?: 'Province', id: string, name: string } | null | undefined, district?: { __typename?: 'District', id: string, name: string } | null | undefined, village?: { __typename?: 'Village', id: string, name: string } | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, last_name: string, first_name: string, username: string, email: string, gender: string, avatar?: string | null | undefined, phone_num?: string | null | undefined, status: number, street?: string | null | undefined, province?: { __typename?: 'Province', id: string, name: string } | null | undefined, district?: { __typename?: 'District', id: string, name: string } | null | undefined, village?: { __typename?: 'Village', id: string, name: string } | null | undefined } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
 
 export type SingleUploadMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -618,7 +635,7 @@ export type DistrictAllQuery = { __typename?: 'Query', districtAll: Array<{ __ty
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, last_name: string, first_name: string, username: string, email: string, gender: string, avatar?: string | null | undefined, phone_num?: string | null | undefined, street?: string | null | undefined, province?: { __typename?: 'Province', id: string, name: string } | null | undefined, district?: { __typename?: 'District', id: string, name: string } | null | undefined, village?: { __typename?: 'Village', id: string, name: string } | null | undefined } | null | undefined };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, last_name: string, first_name: string, username: string, email: string, gender: string, avatar?: string | null | undefined, phone_num?: string | null | undefined, status: number, street?: string | null | undefined, province?: { __typename?: 'Province', id: string, name: string } | null | undefined, district?: { __typename?: 'District', id: string, name: string } | null | undefined, village?: { __typename?: 'Village', id: string, name: string } | null | undefined } | null | undefined };
 
 export type ProductBySlugQueryVariables = Exact<{
   productSlug: Scalars['String'];
@@ -628,21 +645,37 @@ export type ProductBySlugQueryVariables = Exact<{
 export type ProductBySlugQuery = { __typename?: 'Query', productBySlug: { __typename?: 'Product', id: string, name: string, slug?: string | null | undefined, avatar: string, description?: string | null | undefined, installment: boolean, best_sell: boolean, highlight: boolean, new: boolean, price_input: number, discount?: number | null | undefined, price: number, quantity: number, gift?: number | null | undefined, category?: { __typename?: 'Category', id: string, name: string } | null | undefined, brand?: { __typename?: 'Brand', id: string, name: string, logo: string } | null | undefined, product_colors?: Array<{ __typename?: 'Product_Color', colorId: number }> | null | undefined, product_images?: Array<{ __typename?: 'Product_Image', id: string, link: string, colorId: number }> | null | undefined, specificationses?: Array<{ __typename?: 'Specifications', id: string, name: string, content: string }> | null | undefined, promotions?: Array<{ __typename?: 'Promotion', id: string, content: string }> | null | undefined, user_created?: { __typename?: 'User', id: string, last_name: string, first_name: string } | null | undefined, user_updated?: { __typename?: 'User', id: string, last_name: string, first_name: string } | null | undefined } };
 
 export type ProductPaginationQueryVariables = Exact<{
-  productPaginationInput: ProductPaginationInput;
+  productPaginationInput: PaginationInput;
 }>;
 
 
 export type ProductPaginationQuery = { __typename?: 'Query', productPagination: Array<{ __typename?: 'Product', id: string, name: string, slug?: string | null | undefined, avatar: string, description?: string | null | undefined, installment: boolean, best_sell: boolean, highlight: boolean, new: boolean, price_input: number, discount?: number | null | undefined, price: number, quantity: number, gift?: number | null | undefined, category?: { __typename?: 'Category', id: string, name: string } | null | undefined, brand?: { __typename?: 'Brand', id: string, name: string, logo: string } | null | undefined, product_colors?: Array<{ __typename?: 'Product_Color', colorId: number }> | null | undefined, product_images?: Array<{ __typename?: 'Product_Image', id: string, link: string, colorId: number }> | null | undefined, specificationses?: Array<{ __typename?: 'Specifications', id: string, name: string, content: string }> | null | undefined, promotions?: Array<{ __typename?: 'Promotion', id: string, content: string }> | null | undefined, user_created?: { __typename?: 'User', id: string, last_name: string, first_name: string } | null | undefined, user_updated?: { __typename?: 'User', id: string, last_name: string, first_name: string } | null | undefined }> };
+
+export type ProductTotalRowsQueryVariables = Exact<{
+  searchTerm: Scalars['String'];
+}>;
+
+
+export type ProductTotalRowsQuery = { __typename?: 'Query', productTotalRows: number };
 
 export type ProvinceAllQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ProvinceAllQuery = { __typename?: 'Query', provinceAll: Array<{ __typename?: 'Province', id: string, name: string }> };
 
-export type TotalRowsQueryVariables = Exact<{ [key: string]: never; }>;
+export type UserPaginationQueryVariables = Exact<{
+  userPaginationInput: PaginationInput;
+}>;
 
 
-export type TotalRowsQuery = { __typename?: 'Query', totalRows: number };
+export type UserPaginationQuery = { __typename?: 'Query', userPagination: Array<{ __typename?: 'User', id: string, last_name: string, first_name: string, username: string, email: string, gender: string, avatar?: string | null | undefined, phone_num?: string | null | undefined, status: number, street?: string | null | undefined, province?: { __typename?: 'Province', id: string, name: string } | null | undefined, district?: { __typename?: 'District', id: string, name: string } | null | undefined, village?: { __typename?: 'Village', id: string, name: string } | null | undefined }> };
+
+export type UserTotalRowsQueryVariables = Exact<{
+  searchTerm: Scalars['String'];
+}>;
+
+
+export type UserTotalRowsQuery = { __typename?: 'Query', userTotalRows: number };
 
 export type VillageAllQueryVariables = Exact<{
   districtId: Scalars['Float'];
@@ -706,6 +739,7 @@ export const UserInfoFragmentDoc = gql`
   gender
   avatar
   phone_num
+  status
   street
   province {
     id
@@ -734,163 +768,169 @@ export const UserMutationResponseFragmentDoc = gql`
     ${UserMutationStatusesFragmentDoc}
 ${UserInfoFragmentDoc}
 ${FieldErrorFragmentDoc}`;
-export const AddProductDocument = gql`
-    mutation AddProduct($addProductInput: AddProductInput!) {
-  addProduct(addProductInput: $addProductInput) {
+export const AddOrEditProductDocument = gql`
+    mutation AddOrEditProduct($addOrEditProductInput: AddOrEditProductInput!) {
+  addOrEditProduct(addOrEditProductInput: $addOrEditProductInput) {
     ...productMutationResponse
   }
 }
     ${ProductMutationResponseFragmentDoc}`;
-export type AddProductMutationFn = Apollo.MutationFunction<AddProductMutation, AddProductMutationVariables>;
+export type AddOrEditProductMutationFn = Apollo.MutationFunction<AddOrEditProductMutation, AddOrEditProductMutationVariables>;
 
 /**
- * __useAddProductMutation__
+ * __useAddOrEditProductMutation__
  *
- * To run a mutation, you first call `useAddProductMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddProductMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useAddOrEditProductMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddOrEditProductMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [addProductMutation, { data, loading, error }] = useAddProductMutation({
+ * const [addOrEditProductMutation, { data, loading, error }] = useAddOrEditProductMutation({
  *   variables: {
- *      addProductInput: // value for 'addProductInput'
+ *      addOrEditProductInput: // value for 'addOrEditProductInput'
  *   },
  * });
  */
-export function useAddProductMutation(baseOptions?: Apollo.MutationHookOptions<AddProductMutation, AddProductMutationVariables>) {
+export function useAddOrEditProductMutation(baseOptions?: Apollo.MutationHookOptions<AddOrEditProductMutation, AddOrEditProductMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AddProductMutation, AddProductMutationVariables>(AddProductDocument, options);
+        return Apollo.useMutation<AddOrEditProductMutation, AddOrEditProductMutationVariables>(AddOrEditProductDocument, options);
       }
-export type AddProductMutationHookResult = ReturnType<typeof useAddProductMutation>;
-export type AddProductMutationResult = Apollo.MutationResult<AddProductMutation>;
-export type AddProductMutationOptions = Apollo.BaseMutationOptions<AddProductMutation, AddProductMutationVariables>;
-export const AddProductColorsDocument = gql`
-    mutation AddProductColors($addProductColorsInput: AddProductColorsInput!) {
-  addProductColors(addProductColorsInput: $addProductColorsInput)
+export type AddOrEditProductMutationHookResult = ReturnType<typeof useAddOrEditProductMutation>;
+export type AddOrEditProductMutationResult = Apollo.MutationResult<AddOrEditProductMutation>;
+export type AddOrEditProductMutationOptions = Apollo.BaseMutationOptions<AddOrEditProductMutation, AddOrEditProductMutationVariables>;
+export const AddOrEditProductColorsDocument = gql`
+    mutation AddOrEditProductColors($addOrEditProductColorsInput: AddOrEditProductColorsInput!) {
+  addOrEditProductColors(
+    addOrEditProductColorsInput: $addOrEditProductColorsInput
+  )
 }
     `;
-export type AddProductColorsMutationFn = Apollo.MutationFunction<AddProductColorsMutation, AddProductColorsMutationVariables>;
+export type AddOrEditProductColorsMutationFn = Apollo.MutationFunction<AddOrEditProductColorsMutation, AddOrEditProductColorsMutationVariables>;
 
 /**
- * __useAddProductColorsMutation__
+ * __useAddOrEditProductColorsMutation__
  *
- * To run a mutation, you first call `useAddProductColorsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddProductColorsMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useAddOrEditProductColorsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddOrEditProductColorsMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [addProductColorsMutation, { data, loading, error }] = useAddProductColorsMutation({
+ * const [addOrEditProductColorsMutation, { data, loading, error }] = useAddOrEditProductColorsMutation({
  *   variables: {
- *      addProductColorsInput: // value for 'addProductColorsInput'
+ *      addOrEditProductColorsInput: // value for 'addOrEditProductColorsInput'
  *   },
  * });
  */
-export function useAddProductColorsMutation(baseOptions?: Apollo.MutationHookOptions<AddProductColorsMutation, AddProductColorsMutationVariables>) {
+export function useAddOrEditProductColorsMutation(baseOptions?: Apollo.MutationHookOptions<AddOrEditProductColorsMutation, AddOrEditProductColorsMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AddProductColorsMutation, AddProductColorsMutationVariables>(AddProductColorsDocument, options);
+        return Apollo.useMutation<AddOrEditProductColorsMutation, AddOrEditProductColorsMutationVariables>(AddOrEditProductColorsDocument, options);
       }
-export type AddProductColorsMutationHookResult = ReturnType<typeof useAddProductColorsMutation>;
-export type AddProductColorsMutationResult = Apollo.MutationResult<AddProductColorsMutation>;
-export type AddProductColorsMutationOptions = Apollo.BaseMutationOptions<AddProductColorsMutation, AddProductColorsMutationVariables>;
-export const AddProductImagesDocument = gql`
-    mutation AddProductImages($addProductImagesInput: AddProductImagesInput!) {
-  addProductImages(addProductImagesInput: $addProductImagesInput)
+export type AddOrEditProductColorsMutationHookResult = ReturnType<typeof useAddOrEditProductColorsMutation>;
+export type AddOrEditProductColorsMutationResult = Apollo.MutationResult<AddOrEditProductColorsMutation>;
+export type AddOrEditProductColorsMutationOptions = Apollo.BaseMutationOptions<AddOrEditProductColorsMutation, AddOrEditProductColorsMutationVariables>;
+export const AddOrEditProductImagesDocument = gql`
+    mutation AddOrEditProductImages($addOrEditProductImagesInput: AddOrEditProductImagesInput!) {
+  addOrEditProductImages(
+    addOrEditProductImagesInput: $addOrEditProductImagesInput
+  )
 }
     `;
-export type AddProductImagesMutationFn = Apollo.MutationFunction<AddProductImagesMutation, AddProductImagesMutationVariables>;
+export type AddOrEditProductImagesMutationFn = Apollo.MutationFunction<AddOrEditProductImagesMutation, AddOrEditProductImagesMutationVariables>;
 
 /**
- * __useAddProductImagesMutation__
+ * __useAddOrEditProductImagesMutation__
  *
- * To run a mutation, you first call `useAddProductImagesMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddProductImagesMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useAddOrEditProductImagesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddOrEditProductImagesMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [addProductImagesMutation, { data, loading, error }] = useAddProductImagesMutation({
+ * const [addOrEditProductImagesMutation, { data, loading, error }] = useAddOrEditProductImagesMutation({
  *   variables: {
- *      addProductImagesInput: // value for 'addProductImagesInput'
+ *      addOrEditProductImagesInput: // value for 'addOrEditProductImagesInput'
  *   },
  * });
  */
-export function useAddProductImagesMutation(baseOptions?: Apollo.MutationHookOptions<AddProductImagesMutation, AddProductImagesMutationVariables>) {
+export function useAddOrEditProductImagesMutation(baseOptions?: Apollo.MutationHookOptions<AddOrEditProductImagesMutation, AddOrEditProductImagesMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AddProductImagesMutation, AddProductImagesMutationVariables>(AddProductImagesDocument, options);
+        return Apollo.useMutation<AddOrEditProductImagesMutation, AddOrEditProductImagesMutationVariables>(AddOrEditProductImagesDocument, options);
       }
-export type AddProductImagesMutationHookResult = ReturnType<typeof useAddProductImagesMutation>;
-export type AddProductImagesMutationResult = Apollo.MutationResult<AddProductImagesMutation>;
-export type AddProductImagesMutationOptions = Apollo.BaseMutationOptions<AddProductImagesMutation, AddProductImagesMutationVariables>;
-export const AddPromotionDocument = gql`
-    mutation AddPromotion($addPromotionInput: AddPromotionInput!) {
-  addPromotion(addPromotionInput: $addPromotionInput)
+export type AddOrEditProductImagesMutationHookResult = ReturnType<typeof useAddOrEditProductImagesMutation>;
+export type AddOrEditProductImagesMutationResult = Apollo.MutationResult<AddOrEditProductImagesMutation>;
+export type AddOrEditProductImagesMutationOptions = Apollo.BaseMutationOptions<AddOrEditProductImagesMutation, AddOrEditProductImagesMutationVariables>;
+export const AddOrEditSpecificationsDocument = gql`
+    mutation AddOrEditSpecifications($addOrEditSpecificationsInput: AddOrEditSpecificationsInput!) {
+  addOrEditSpecifications(
+    addOrEditSpecificationsInput: $addOrEditSpecificationsInput
+  )
 }
     `;
-export type AddPromotionMutationFn = Apollo.MutationFunction<AddPromotionMutation, AddPromotionMutationVariables>;
+export type AddOrEditSpecificationsMutationFn = Apollo.MutationFunction<AddOrEditSpecificationsMutation, AddOrEditSpecificationsMutationVariables>;
 
 /**
- * __useAddPromotionMutation__
+ * __useAddOrEditSpecificationsMutation__
  *
- * To run a mutation, you first call `useAddPromotionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddPromotionMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useAddOrEditSpecificationsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddOrEditSpecificationsMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [addPromotionMutation, { data, loading, error }] = useAddPromotionMutation({
+ * const [addOrEditSpecificationsMutation, { data, loading, error }] = useAddOrEditSpecificationsMutation({
  *   variables: {
- *      addPromotionInput: // value for 'addPromotionInput'
+ *      addOrEditSpecificationsInput: // value for 'addOrEditSpecificationsInput'
  *   },
  * });
  */
-export function useAddPromotionMutation(baseOptions?: Apollo.MutationHookOptions<AddPromotionMutation, AddPromotionMutationVariables>) {
+export function useAddOrEditSpecificationsMutation(baseOptions?: Apollo.MutationHookOptions<AddOrEditSpecificationsMutation, AddOrEditSpecificationsMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AddPromotionMutation, AddPromotionMutationVariables>(AddPromotionDocument, options);
+        return Apollo.useMutation<AddOrEditSpecificationsMutation, AddOrEditSpecificationsMutationVariables>(AddOrEditSpecificationsDocument, options);
       }
-export type AddPromotionMutationHookResult = ReturnType<typeof useAddPromotionMutation>;
-export type AddPromotionMutationResult = Apollo.MutationResult<AddPromotionMutation>;
-export type AddPromotionMutationOptions = Apollo.BaseMutationOptions<AddPromotionMutation, AddPromotionMutationVariables>;
-export const AddSpecificationsDocument = gql`
-    mutation AddSpecifications($addSpecificationsInput: AddSpecificationsInput!) {
-  addSpecifications(addSpecificationsInput: $addSpecificationsInput)
+export type AddOrEditSpecificationsMutationHookResult = ReturnType<typeof useAddOrEditSpecificationsMutation>;
+export type AddOrEditSpecificationsMutationResult = Apollo.MutationResult<AddOrEditSpecificationsMutation>;
+export type AddOrEditSpecificationsMutationOptions = Apollo.BaseMutationOptions<AddOrEditSpecificationsMutation, AddOrEditSpecificationsMutationVariables>;
+export const AddOrEditPromotionDocument = gql`
+    mutation AddOrEditPromotion($addOrEditPromotionInput: AddOrEditPromotionInput!) {
+  addOrEditPromotion(addOrEditPromotionInput: $addOrEditPromotionInput)
 }
     `;
-export type AddSpecificationsMutationFn = Apollo.MutationFunction<AddSpecificationsMutation, AddSpecificationsMutationVariables>;
+export type AddOrEditPromotionMutationFn = Apollo.MutationFunction<AddOrEditPromotionMutation, AddOrEditPromotionMutationVariables>;
 
 /**
- * __useAddSpecificationsMutation__
+ * __useAddOrEditPromotionMutation__
  *
- * To run a mutation, you first call `useAddSpecificationsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddSpecificationsMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useAddOrEditPromotionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddOrEditPromotionMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [addSpecificationsMutation, { data, loading, error }] = useAddSpecificationsMutation({
+ * const [addOrEditPromotionMutation, { data, loading, error }] = useAddOrEditPromotionMutation({
  *   variables: {
- *      addSpecificationsInput: // value for 'addSpecificationsInput'
+ *      addOrEditPromotionInput: // value for 'addOrEditPromotionInput'
  *   },
  * });
  */
-export function useAddSpecificationsMutation(baseOptions?: Apollo.MutationHookOptions<AddSpecificationsMutation, AddSpecificationsMutationVariables>) {
+export function useAddOrEditPromotionMutation(baseOptions?: Apollo.MutationHookOptions<AddOrEditPromotionMutation, AddOrEditPromotionMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AddSpecificationsMutation, AddSpecificationsMutationVariables>(AddSpecificationsDocument, options);
+        return Apollo.useMutation<AddOrEditPromotionMutation, AddOrEditPromotionMutationVariables>(AddOrEditPromotionDocument, options);
       }
-export type AddSpecificationsMutationHookResult = ReturnType<typeof useAddSpecificationsMutation>;
-export type AddSpecificationsMutationResult = Apollo.MutationResult<AddSpecificationsMutation>;
-export type AddSpecificationsMutationOptions = Apollo.BaseMutationOptions<AddSpecificationsMutation, AddSpecificationsMutationVariables>;
+export type AddOrEditPromotionMutationHookResult = ReturnType<typeof useAddOrEditPromotionMutation>;
+export type AddOrEditPromotionMutationResult = Apollo.MutationResult<AddOrEditPromotionMutation>;
+export type AddOrEditPromotionMutationOptions = Apollo.BaseMutationOptions<AddOrEditPromotionMutation, AddOrEditPromotionMutationVariables>;
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($userId: Float!, $token: String!, $changePasswordInput: ChangePasswordInput!) {
   changePassword(
@@ -963,6 +1003,68 @@ export function useChangeUserProfileMutation(baseOptions?: Apollo.MutationHookOp
 export type ChangeUserProfileMutationHookResult = ReturnType<typeof useChangeUserProfileMutation>;
 export type ChangeUserProfileMutationResult = Apollo.MutationResult<ChangeUserProfileMutation>;
 export type ChangeUserProfileMutationOptions = Apollo.BaseMutationOptions<ChangeUserProfileMutation, ChangeUserProfileMutationVariables>;
+export const DelProductDocument = gql`
+    mutation DelProduct($id: Float!) {
+  delProduct(id: $id)
+}
+    `;
+export type DelProductMutationFn = Apollo.MutationFunction<DelProductMutation, DelProductMutationVariables>;
+
+/**
+ * __useDelProductMutation__
+ *
+ * To run a mutation, you first call `useDelProductMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDelProductMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [delProductMutation, { data, loading, error }] = useDelProductMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDelProductMutation(baseOptions?: Apollo.MutationHookOptions<DelProductMutation, DelProductMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DelProductMutation, DelProductMutationVariables>(DelProductDocument, options);
+      }
+export type DelProductMutationHookResult = ReturnType<typeof useDelProductMutation>;
+export type DelProductMutationResult = Apollo.MutationResult<DelProductMutation>;
+export type DelProductMutationOptions = Apollo.BaseMutationOptions<DelProductMutation, DelProductMutationVariables>;
+export const DelUserDocument = gql`
+    mutation DelUser($id: Float!) {
+  delUser(id: $id)
+}
+    `;
+export type DelUserMutationFn = Apollo.MutationFunction<DelUserMutation, DelUserMutationVariables>;
+
+/**
+ * __useDelUserMutation__
+ *
+ * To run a mutation, you first call `useDelUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDelUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [delUserMutation, { data, loading, error }] = useDelUserMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDelUserMutation(baseOptions?: Apollo.MutationHookOptions<DelUserMutation, DelUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DelUserMutation, DelUserMutationVariables>(DelUserDocument, options);
+      }
+export type DelUserMutationHookResult = ReturnType<typeof useDelUserMutation>;
+export type DelUserMutationResult = Apollo.MutationResult<DelUserMutation>;
+export type DelUserMutationOptions = Apollo.BaseMutationOptions<DelUserMutation, DelUserMutationVariables>;
 export const EditPasswordDocument = gql`
     mutation EditPassword($editPasswordInput: EditPasswordInput!) {
   editPassword(editPasswordInput: $editPasswordInput) {
@@ -1520,7 +1622,7 @@ export type ProductBySlugQueryHookResult = ReturnType<typeof useProductBySlugQue
 export type ProductBySlugLazyQueryHookResult = ReturnType<typeof useProductBySlugLazyQuery>;
 export type ProductBySlugQueryResult = Apollo.QueryResult<ProductBySlugQuery, ProductBySlugQueryVariables>;
 export const ProductPaginationDocument = gql`
-    query ProductPagination($productPaginationInput: ProductPaginationInput!) {
+    query ProductPagination($productPaginationInput: PaginationInput!) {
   productPagination(productPaginationInput: $productPaginationInput) {
     id
     name
@@ -1603,6 +1705,39 @@ export function useProductPaginationLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type ProductPaginationQueryHookResult = ReturnType<typeof useProductPaginationQuery>;
 export type ProductPaginationLazyQueryHookResult = ReturnType<typeof useProductPaginationLazyQuery>;
 export type ProductPaginationQueryResult = Apollo.QueryResult<ProductPaginationQuery, ProductPaginationQueryVariables>;
+export const ProductTotalRowsDocument = gql`
+    query ProductTotalRows($searchTerm: String!) {
+  productTotalRows(searchTerm: $searchTerm)
+}
+    `;
+
+/**
+ * __useProductTotalRowsQuery__
+ *
+ * To run a query within a React component, call `useProductTotalRowsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProductTotalRowsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProductTotalRowsQuery({
+ *   variables: {
+ *      searchTerm: // value for 'searchTerm'
+ *   },
+ * });
+ */
+export function useProductTotalRowsQuery(baseOptions: Apollo.QueryHookOptions<ProductTotalRowsQuery, ProductTotalRowsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProductTotalRowsQuery, ProductTotalRowsQueryVariables>(ProductTotalRowsDocument, options);
+      }
+export function useProductTotalRowsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProductTotalRowsQuery, ProductTotalRowsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProductTotalRowsQuery, ProductTotalRowsQueryVariables>(ProductTotalRowsDocument, options);
+        }
+export type ProductTotalRowsQueryHookResult = ReturnType<typeof useProductTotalRowsQuery>;
+export type ProductTotalRowsLazyQueryHookResult = ReturnType<typeof useProductTotalRowsLazyQuery>;
+export type ProductTotalRowsQueryResult = Apollo.QueryResult<ProductTotalRowsQuery, ProductTotalRowsQueryVariables>;
 export const ProvinceAllDocument = gql`
     query ProvinceAll {
   provinceAll {
@@ -1638,38 +1773,74 @@ export function useProvinceAllLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type ProvinceAllQueryHookResult = ReturnType<typeof useProvinceAllQuery>;
 export type ProvinceAllLazyQueryHookResult = ReturnType<typeof useProvinceAllLazyQuery>;
 export type ProvinceAllQueryResult = Apollo.QueryResult<ProvinceAllQuery, ProvinceAllQueryVariables>;
-export const TotalRowsDocument = gql`
-    query TotalRows {
-  totalRows
+export const UserPaginationDocument = gql`
+    query UserPagination($userPaginationInput: PaginationInput!) {
+  userPagination(userPaginationInput: $userPaginationInput) {
+    ...userInfo
+  }
 }
-    `;
+    ${UserInfoFragmentDoc}`;
 
 /**
- * __useTotalRowsQuery__
+ * __useUserPaginationQuery__
  *
- * To run a query within a React component, call `useTotalRowsQuery` and pass it any options that fit your needs.
- * When your component renders, `useTotalRowsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useUserPaginationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserPaginationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useTotalRowsQuery({
+ * const { data, loading, error } = useUserPaginationQuery({
  *   variables: {
+ *      userPaginationInput: // value for 'userPaginationInput'
  *   },
  * });
  */
-export function useTotalRowsQuery(baseOptions?: Apollo.QueryHookOptions<TotalRowsQuery, TotalRowsQueryVariables>) {
+export function useUserPaginationQuery(baseOptions: Apollo.QueryHookOptions<UserPaginationQuery, UserPaginationQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TotalRowsQuery, TotalRowsQueryVariables>(TotalRowsDocument, options);
+        return Apollo.useQuery<UserPaginationQuery, UserPaginationQueryVariables>(UserPaginationDocument, options);
       }
-export function useTotalRowsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TotalRowsQuery, TotalRowsQueryVariables>) {
+export function useUserPaginationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserPaginationQuery, UserPaginationQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TotalRowsQuery, TotalRowsQueryVariables>(TotalRowsDocument, options);
+          return Apollo.useLazyQuery<UserPaginationQuery, UserPaginationQueryVariables>(UserPaginationDocument, options);
         }
-export type TotalRowsQueryHookResult = ReturnType<typeof useTotalRowsQuery>;
-export type TotalRowsLazyQueryHookResult = ReturnType<typeof useTotalRowsLazyQuery>;
-export type TotalRowsQueryResult = Apollo.QueryResult<TotalRowsQuery, TotalRowsQueryVariables>;
+export type UserPaginationQueryHookResult = ReturnType<typeof useUserPaginationQuery>;
+export type UserPaginationLazyQueryHookResult = ReturnType<typeof useUserPaginationLazyQuery>;
+export type UserPaginationQueryResult = Apollo.QueryResult<UserPaginationQuery, UserPaginationQueryVariables>;
+export const UserTotalRowsDocument = gql`
+    query UserTotalRows($searchTerm: String!) {
+  userTotalRows(searchTerm: $searchTerm)
+}
+    `;
+
+/**
+ * __useUserTotalRowsQuery__
+ *
+ * To run a query within a React component, call `useUserTotalRowsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserTotalRowsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserTotalRowsQuery({
+ *   variables: {
+ *      searchTerm: // value for 'searchTerm'
+ *   },
+ * });
+ */
+export function useUserTotalRowsQuery(baseOptions: Apollo.QueryHookOptions<UserTotalRowsQuery, UserTotalRowsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<UserTotalRowsQuery, UserTotalRowsQueryVariables>(UserTotalRowsDocument, options);
+      }
+export function useUserTotalRowsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserTotalRowsQuery, UserTotalRowsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<UserTotalRowsQuery, UserTotalRowsQueryVariables>(UserTotalRowsDocument, options);
+        }
+export type UserTotalRowsQueryHookResult = ReturnType<typeof useUserTotalRowsQuery>;
+export type UserTotalRowsLazyQueryHookResult = ReturnType<typeof useUserTotalRowsLazyQuery>;
+export type UserTotalRowsQueryResult = Apollo.QueryResult<UserTotalRowsQuery, UserTotalRowsQueryVariables>;
 export const VillageAllDocument = gql`
     query VillageAll($districtId: Float!) {
   villageAll(districtId: $districtId) {

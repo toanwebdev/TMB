@@ -70,12 +70,13 @@ const Sidebar = () => {
 	]
 
 	useEffect(() => {
-		const curPath = router.route.split('/quan-tri')[1]
-		const activeIndex = sidebars.findIndex(
-			(item) => `/${item.slug}` === curPath,
-		)
+		const curPath = router.route.split('/')[2]
+		const activeIndex =
+			curPath === undefined
+				? 0
+				: sidebars.findIndex((item) => item.slug === curPath)
 
-		setSideIndex(curPath.length === 0 ? 0 : activeIndex)
+		setSideIndex(activeIndex)
 	}, [router])
 
 	return (

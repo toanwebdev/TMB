@@ -1,0 +1,5 @@
+mutation AddOrEditProduct($addOrEditProductInput: AddOrEditProductInput!) {
+	addOrEditProduct(addOrEditProductInput: $addOrEditProductInput) {
+		...productMutationResponse
+	}
+}

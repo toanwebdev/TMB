@@ -9,8 +9,9 @@ export class UploadResolver {
 	@Mutation((_return) => String)
 	async singleUpload(
 		@Arg('file', () => GraphQLUpload)
-		{ createReadStream, filename }: Upload,
+		file: Upload,
 	): Promise<string> {
+		const { createReadStream, filename } = (await file) as Upload
 		const { name, ext } = path.parse(filename)
 		const uploadName = `${name}_${Date.now()}${ext}`
 

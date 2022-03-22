@@ -13,10 +13,20 @@ import {
 } from '@chakra-ui/react'
 
 interface IModalDelProps {
-	name?: string
+	id?: number
+	title?: string
+	content?: string
+	onHandleDel?: any
+	isLoading?: boolean
 }
 
-const ModalDel = ({ name }: IModalDelProps) => {
+const ModalDel = ({
+	id,
+	title,
+	content,
+	onHandleDel,
+	isLoading,
+}: IModalDelProps) => {
 	const { isOpen, onOpen, onClose } = useDisclosure()
 
 	return (
@@ -25,7 +35,7 @@ const ModalDel = ({ name }: IModalDelProps) => {
 				<IconButton
 					size='sm'
 					colorScheme='red'
-					aria-label='Xóa sản phẩm'
+					aria-label={title as string}
 					icon={<i className='bx bx-trash-alt'></i>}
 					onClick={onOpen}
 				/>
@@ -33,12 +43,16 @@ const ModalDel = ({ name }: IModalDelProps) => {
 			<Modal isOpen={isOpen} onClose={onClose}>
 				<ModalOverlay />
 				<ModalContent>
-					<ModalHeader>Xóa sản phẩm</ModalHeader>
+					<ModalHeader>{title}</ModalHeader>
 					<ModalCloseButton />
-					<ModalBody>Bạn chắc chắn muốn xóa {name} ?</ModalBody>
+					<ModalBody>Bạn chắc chắn muốn xóa {content} ?</ModalBody>
 
 					<ModalFooter>
-						<Button colorScheme='blue' mr={3}>
+						<Button
+							colorScheme='blue'
+							mr={3}
+							isLoading={isLoading}
+							onClick={() => onHandleDel(id)}>
 							Đồng ý
 						</Button>
 						<Button colorScheme='red' onClick={onClose}>
